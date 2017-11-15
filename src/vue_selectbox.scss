@@ -1,0 +1,104 @@
+$blue: blue !default;
+$gray: gray !default;
+$linegrid: 1.5 !default;
+
+.selectbox {
+    position: relative;
+    line-height: $linegrid;
+    box-sizing: border-box;
+
+    *,
+    *:before,
+    *:after {
+        box-sizing: inherit;
+    }
+
+    input[type="text"],
+    .inputframe {
+        display: block;
+        margin: 0;
+        padding: 0.2em 0.4em;
+        border: 1px solid rgba($blue, 0.4);
+        outline: none;
+        font-size: inherit;
+        line-height: $linegrid;
+    }
+
+    .clear {
+        @include fa-icon;
+        position: absolute;
+        right: 0.5em;
+        top: 0.2em;
+        color: $blue;
+
+        &:after {
+            content: $fa-var-search;
+            line-height: $linegrid;
+        }
+
+        &.active:after {
+            content: $fa-var-close;
+            cursor: pointer;
+        }
+    }
+
+    .placeholder {
+        opacity: 0.3;
+    }
+
+    .value {
+        display: inline-block;
+        position: relative;
+        padding-right: 1.15em;
+        margin-right: 1em;
+
+        .clear {
+            top: 0;
+            right: 0;
+        }
+
+        &:focus {
+            outline: none;
+        }
+    }
+
+    .candidates {
+        position: absolute;
+        z-index: 4;
+        width: 100%;
+        background: white;
+        color: $gray;
+        border: 1px solid rgba($blue, 0.4);
+        border-top: none;
+
+        input {
+            border: none;
+        }
+
+        ul {
+            margin: 0;
+            padding: 0;
+            list-style-type: none;
+            overflow-y: auto;
+            max-height: 200px;
+            border-top: 1px solid rgba($blue, 0.4);
+        }
+
+        li {
+            border-bottom: 1px solid rgba($gray, 0.3);
+            padding: 0.2em 0.4em;
+            cursor: pointer;
+            overflow-x: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+
+            &.active {
+                background: rgba($blue, 0.2);
+            }
+
+            &:last-child {
+                border: none;
+            }
+        }
+    }
+}

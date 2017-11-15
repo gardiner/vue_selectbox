@@ -1,0 +1,1 @@
+vue.js select/multiselect component

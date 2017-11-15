@@ -1,0 +1,12 @@
+.selectbox
+    .inputframe(v-on:click="activate" v-on:focus="activate" tabindex="0")
+        %span.value(v-for="item in value" tabindex="-1")
+            .clear.active(v-on:click="function(e) { unset_value(item); e.stopPropagation(); return false; }")
+            {{ pretty(item) }}
+        %span.placeholder(v-if="!has_value") {{ is_open ? '&nbsp;' : safe_placeholder }}
+    .candidates(v-if="is_open")
+        %input{"type"=>"text", "v-on:keydown.up"=>"prev", "v-on:keydown.down"=>"next", "v-on:keydown.enter.prevent"=>"select", "v-on:keydown.esc"=>"close", "v-model"=>"input", "autocomplete"=>"off"}
+        .clear(:class="{active: input}" v-on:click="close")
+        %ul(v-if="filtered_candidates.length > 0")
+            %li(v-for="c, $index in filtered_candidates" v-bind:class="{active: (current === $index)}" v-on:mouseenter="set_current($index)" v-on:click="select" v-bind:title="pretty(c)")
+                {{ pretty(c) }}

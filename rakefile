@@ -1,0 +1,46 @@
+require 'rake/clean'
+
+ROOT = File.dirname(__FILE__)
+
+
+task :default => [:watch]
+
+
+desc 'Compiles HAML and SCSS resources'
+task :compile do
+    sh "rm -rf dist && mkdir dist"
+    sh "haml src/vue_selectbox.haml dist/vue_selectbox.html"
+
+    ['dist/vue_selectbox.html'].each { |html|
+        name = File.basename(html)
+        html_source = File.open(html).read.gsub(/\n\s*/, "")
+        ['src/vue_selectbox.js'].each { |js|
+            updated = File.open(js).read.gsub("[[#{name}]]", html_source)
+            File.open(File.join('dist', File.basename(js)), 'w').write(updated)
+        }
+        sh "rm #{html}"
+    }
+end
+
+
+desc 'Compiles Demo'
+task :demo => [:compile] do
+    sh "haml demo/demo.haml demo/demo.html"
+    sh "scss demo/demo.scss demo/demo.css"
+end
+
+
+desc 'Compiles HAML and SCSS resources'
+task :watch => [:compile] do
+    watch_changes
+end
+
+
+def watch_changes
+    require 'listen'
+    Listen.to(File.join(ROOT, 'src'), :only => /\.(haml|scss|js)$/) do |mod, add, rem|
+        sh "rake compile"
+    end.start
+    sleep
+end
+
