@@ -21,9 +21,9 @@
                         selectbox: vue_selectbox
                     },
                     data: {
-                        current: null,
-                        current_multiple: null,
-                        candidates: [
+                        single: null,
+                        multiple: null,
+                        continents: [
                             {name: 'Antarctica'},
                             {name: 'Asia'},
                             {name: 'Australia'},
@@ -31,24 +31,16 @@
                             {name: 'North America'},
                             {name: 'South America'}
                         ]
-                    },
-                    methods: {
-                        select: function(value) {
-                            this.current = value;
-                        },
-                        select_multiple: function(value) {
-                            this.current_multiple = value;
-                        },
-                    },
+                    }
                 }).$mount("#demo");
             });
 
     %body
         #demo(v-cloak)
             %h2 Single Select
-            %selectbox(:candidates="candidates" label="name" v-on:update="select" :model="current" placeholder="Select...")
-            %pre {{current || 'null'}}
+            %selectbox(:candidates="continents" label="name" v-on:update="(val) => single = val" :model="single" placeholder="Select...")
+            %pre {{single || 'null'}}
 
             %h2 Multi Select
-            %selectbox(:candidates="candidates" label="name" v-on:update="select_multiple" :model="current_multiple" multiple="multiple" placeholder="Select Multiple...")
-            %pre {{current_multiple || '[]'}}
+            %selectbox(:candidates="continents" label="name" v-on:update="(val) => multiple = val" :model="multiple" multiple="multiple" placeholder="Select Multiple...")
+            %pre {{multiple || '[]'}}
