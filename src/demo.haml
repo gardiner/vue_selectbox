@@ -1,0 +1,54 @@
+!!!
+%html(xmlns="http://www.w3.org/1999/xhtml" lang="de")
+    %head
+        %link(href="demo.css" rel="stylesheet" type="text/css")
+        %script(src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.5/require.min.js" type="text/javascript")
+        %title Vue Selectbox Demo
+        :javascript
+            requirejs.config({
+                paths: {
+                    "jquery": "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min",
+                    "vue": "https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.3/vue.min",
+                    "lodash": "https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min",
+                    "vue_selectbox": "../dist/vue_selectbox"
+                }
+            });
+            requirejs(["jquery", "vue", "vue_selectbox"], function($, vue, vue_selectbox) {
+                "use strict";
+
+                new vue({
+                    components: {
+                        selectbox: vue_selectbox
+                    },
+                    data: {
+                        current: null,
+                        current_multiple: null,
+                        candidates: [
+                            {name: 'Antarctica'},
+                            {name: 'Asia'},
+                            {name: 'Australia'},
+                            {name: 'Europe'},
+                            {name: 'North America'},
+                            {name: 'South America'}
+                        ]
+                    },
+                    methods: {
+                        select: function(value) {
+                            this.current = value;
+                        },
+                        select_multiple: function(value) {
+                            this.current_multiple = value;
+                        },
+                    },
+                }).$mount("#demo");
+            });
+
+    %body
+        #demo(v-cloak)
+            %h2 Single Select
+            %selectbox(:candidates="candidates" label="name" v-on:update="select" :model="current" placeholder="Select...")
+            %pre {{current || 'null'}}
+
+            %h2 Multi Select
+            %selectbox(:candidates="candidates" label="name" v-on:update="select_multiple" :model="current_multiple" multiple="multiple" placeholder="Select Multiple...")
+            %pre {{current_multiple || '[]'}}

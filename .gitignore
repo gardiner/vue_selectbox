@@ -1,6 +1,5 @@
+-*
 .DS_Store
 .sass-cache
 bower_components
-demo/demo.html
-demo/demo.css
-demo/demo.css.map
+build

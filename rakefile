@@ -1,46 +1,57 @@
-require 'rake/clean'
-
 ROOT = File.dirname(__FILE__)
+
+HAML = FileList['src/*.haml']
+HTML = HAML.gsub('src', 'build').ext('html')
+SCSS = FileList['src/[^_]*.scss']
+CSS = SCSS.gsub('src', 'build').ext('css')
 
 
 task :default => [:watch]
 
 
 desc 'Compiles HAML and SCSS resources'
-task :compile do
-    sh "rm -rf dist && mkdir dist"
-    sh "haml src/vue_selectbox.haml dist/vue_selectbox.html"
-
-    ['dist/vue_selectbox.html'].each { |html|
+task :compile => [:prepare] + HTML + CSS do |t|
+    Dir.glob('build/*.html').each { |html|
         name = File.basename(html)
         html_source = File.open(html).read.gsub(/\n\s*/, "")
-        ['src/vue_selectbox.js'].each { |js|
+        Dir.glob('src/*.js').each { |js|
             updated = File.open(js).read.gsub("[[#{name}]]", html_source)
             File.open(File.join('dist', File.basename(js)), 'w').write(updated)
         }
-        sh "rm #{html}"
     }
 end
 
 
-desc 'Compiles Demo'
-task :demo => [:compile] do
-    sh "haml demo/demo.haml demo/demo.html"
-    sh "scss demo/demo.scss demo/demo.css"
+task :prepare do
+    sh "bower install" unless File.exist? 'bower_components'
+    ['build', 'dist'].each do |dir|
+        sh "mkdir #{dir}" unless File.exist? dir
+    end
 end
+
 
 
 desc 'Compiles HAML and SCSS resources'
-task :watch => [:compile] do
-    watch_changes
-end
-
-
-def watch_changes
+task :watch => [:compile] do |t|
     require 'listen'
     Listen.to(File.join(ROOT, 'src'), :only => /\.(haml|scss|js)$/) do |mod, add, rem|
         sh "rake compile"
     end.start
-    sleep
+    host = (if ENV['global'] == "true" then "0.0.0.0" else "127.0.0.1" end)
+    puts "Serving site on \"http://#{host}:8080/\" and recompiling on changes."
+    sh "ruby -run -e httpd . -b #{host} -p 8080"
 end
 
+
+
+rule '.html' => lambda { |dest| HAML.find { |f| File.basename(f, '.haml') == File.basename(dest, '.html') } } do |t|
+    puts "Rebuilding #{t.name} from #{t.source}"
+    sh "haml \"#{t.source}\" \"#{t.name}\""
+end
+
+
+
+rule '.css' => lambda { |dest| SCSS.find { |f| File.basename(f, '.scss') == File.basename(dest, '.css') } } do |t|
+    puts "Rebuilding #{t.name} from #{t.source}"
+    sh "sass #{t.source} #{t.name}"
+end

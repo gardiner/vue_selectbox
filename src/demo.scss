@@ -1,6 +1,6 @@
 $fa-font-path: "../bower_components/font-awesome/fonts";
 @import "../bower_components/font-awesome/scss/font-awesome";
-@import "../src/vue_selectbox";
+@import "vue_selectbox";
 
 [vcloak] {
     display: none;
