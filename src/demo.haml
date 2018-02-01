@@ -21,7 +21,8 @@
                         selectbox: vue_selectbox
                     },
                     data: {
-                        single: null,
+                        single1: null,
+                        single2: null,
                         multiple: null,
                         continents: [
                             {name: 'Antarctica'},
@@ -38,9 +39,14 @@
     %body
         #demo(v-cloak)
             %h2 Single Select
-            %selectbox(:candidates="continents" label="name" v-on:update="(val) => single = val" :model="single" placeholder="Select...")
-            %pre {{single || 'null'}}
+            %selectbox(:candidates="continents" label="name" v-on:update="(val) => single1 = val" :model="single1" placeholder="Select...")
+            %pre {{single1 || 'null'}}
 
             %h2 Multi Select
             %selectbox(:candidates="continents" label="name" v-on:update="(val) => multiple = val" :model="multiple" multiple="multiple" placeholder="Select Multiple...")
             %pre {{multiple || '[]'}}
+
+            %h2 Add new options
+            %selectbox(:candidates="continents" label="name" v-on:update="(val) => single2 = val" v-on:add="(val) => continents.push(single2 = {name: val})" :model="single2" add="close" placeholder="Select...")
+            %pre {{single2 || 'null'}}
+

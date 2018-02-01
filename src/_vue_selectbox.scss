@@ -24,21 +24,42 @@ $linegrid: 1.5 !default;
         line-height: $linegrid;
     }
 
-    .clear {
+    .icon {
         @include fa-icon;
-        position: absolute;
-        right: 0.5em;
-        top: 0.2em;
         color: $blue;
-
-        &:after {
-            content: $fa-var-search;
-            line-height: $linegrid;
-        }
+        line-height: $linegrid;
 
         &.active:after {
-            content: $fa-var-close;
             cursor: pointer;
+        }
+
+        &.clear {
+            position: absolute;
+            right: 0.5em;
+            top: 0.2em;
+
+            &:after {
+                content: $fa-var-search;
+            }
+
+            &.active:after {
+                content: $fa-var-close;
+            }
+        }
+
+        &.add {
+            display: none;
+
+            &:after {
+                content: $fa-var-plus;
+            }
+
+            &.active {
+                display: block;
+                position: absolute;
+                right: 2em;
+                top: 0.2em;
+            }
         }
     }
 
@@ -94,6 +115,11 @@ $linegrid: 1.5 !default;
 
             &.active {
                 background: rgba($blue, 0.2);
+            }
+
+            &.selected {
+                color: rgba($gray, 0.2);
+                background: none;
             }
 
             &:last-child {
