@@ -6,7 +6,8 @@
         %span.placeholder(v-if="!has_value") {{ is_open ? '&nbsp;' : safe_placeholder }}
 
     .candidates(v-if="is_open")
-        %input{"type"=>"text", "v-on:keydown.up"=>"prev", "v-on:keydown.down"=>"next", "v-on:keydown.enter.prevent"=>"select", "v-on:keydown.esc"=>"close", "v-model"=>"input", "autocomplete"=>"off"}
+        .input
+            %input{"type"=>"text", "v-on:keydown.up"=>"prev", "v-on:keydown.down"=>"next", "v-on:keydown.enter.prevent"=>"select", "v-on:keydown.esc"=>"close", "v-model"=>"input", "autocomplete"=>"off"}
         .icon.add(:class="{active: is_add_visible}" v-on:click="add_candidate")
         .icon.clear(:class="{active: input}" v-on:click="close")
 

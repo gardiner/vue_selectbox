@@ -16,6 +16,7 @@ $linegrid: 1.5 !default;
     input[type="text"],
     .inputframe {
         display: block;
+        width: 100%;
         margin: 0;
         padding: 0.2em 0.4em;
         border: 1px solid rgba($blue, 0.4);

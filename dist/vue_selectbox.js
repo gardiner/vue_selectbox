@@ -2,7 +2,7 @@ define(['lodash', 'jquery'], function(_, $) {
     "use strict";
 
     return {
-        template: "<div class='selectbox'><div class='inputframe' tabindex='0' v-on:click='activate' v-on:focus='activate'><span class='value' tabindex='-1' v-for='item in value'><div class='icon clear active' v-on:click='function(e) { unset_value(item); e.stopPropagation(); return false; }'></div>{{ pretty(item) }}</span><span class='placeholder' v-if='!has_value'>{{ is_open ? '&nbsp;' : safe_placeholder }}</span></div><div class='candidates' v-if='is_open'><input autocomplete='off' type='text' v-model='input' v-on:keydown.down='next' v-on:keydown.enter.prevent='select' v-on:keydown.esc='close' v-on:keydown.up='prev'><div :class='{active: is_add_visible}' class='icon add' v-on:click='add_candidate'></div><div :class='{active: input}' class='icon clear' v-on:click='close'></div><ul v-if='filtered_candidates.length &gt; 0'><li v-bind:class='{selected: is_selected(c), active: (current === $index)}' v-bind:title='pretty(c)' v-for='c, $index in filtered_candidates' v-on:click='select' v-on:mouseenter='set_current($index)'>{{ pretty(c) }}</li></ul></div></div>",
+        template: "<div class='selectbox'><div class='inputframe' tabindex='0' v-on:click='activate' v-on:focus='activate'><span class='value' tabindex='-1' v-for='item in value'><div class='icon clear active' v-on:click='function(e) { unset_value(item); e.stopPropagation(); return false; }'></div>{{ pretty(item) }}</span><span class='placeholder' v-if='!has_value'>{{ is_open ? '&nbsp;' : safe_placeholder }}</span></div><div class='candidates' v-if='is_open'><div class='input'><input autocomplete='off' type='text' v-model='input' v-on:keydown.down='next' v-on:keydown.enter.prevent='select' v-on:keydown.esc='close' v-on:keydown.up='prev'></div><div :class='{active: is_add_visible}' class='icon add' v-on:click='add_candidate'></div><div :class='{active: input}' class='icon clear' v-on:click='close'></div><ul v-if='filtered_candidates.length &gt; 0'><li v-bind:class='{selected: is_selected(c), active: (current === $index)}' v-bind:title='pretty(c)' v-for='c, $index in filtered_candidates' v-on:click='select' v-on:mouseenter='set_current($index)'>{{ pretty(c) }}</li></ul></div></div>",
         props: ['candidates', 'placeholder', 'model', 'label', 'multiple', 'add'],
         data: function() {
             return {
@@ -61,14 +61,17 @@ define(['lodash', 'jquery'], function(_, $) {
         },
         methods: {
             activate: function($event) {
-                var self = this;
-
                 $(document).trigger('close_selectboxes');
                 if (!$event || ($event.keyCode !== 13 && $event.keyCode !== 27)) {
                     this.is_open = true;
-                    window.setTimeout(function() { $(self.$el).find('input').focus(); });
+                    this.focus();
                     return false;
                 }
+            },
+            focus: function() {
+                var self = this;
+
+                window.setTimeout(function() { $(self.$el).find('input').focus(); });
             },
             close: function() {
                 this.is_open = false;
@@ -80,7 +83,12 @@ define(['lodash', 'jquery'], function(_, $) {
              */
             set_current: function(index) {
                 var num = this.filtered_candidates.length;
-                this.current = (index + num) % num;
+
+                if (index === false || this.is_selected(this.get_by_index(index))) {
+                    this.current === false;
+                } else {
+                    this.current = (index + num) % num;
+                }
                 if (num > 1) {
                     this.check_scroll();
                 }
@@ -100,11 +108,32 @@ define(['lodash', 'jquery'], function(_, $) {
                     $candidates.scrollTop(current_min);
                 }
             },
+            get_by_index: function(index) {
+                var num = this.filtered_candidates.length;
+                return this.filtered_candidates[(index + num) % num];
+            },
+            find_next: function(direction) {
+                var num = this.filtered_candidates.length,
+                    next_index;
+
+                if (this.current === false) {
+                    next_index = (direction > 0) ? 0 : -1;
+                } else {
+                    next_index = this.current + direction;
+                }
+
+                //skip selected values, but limited tries to avoid endless loop
+                while (this.is_selected(this.get_by_index(next_index)) && next_index < (2 * num) && next_index > (-2 * num)) {
+                    next_index += direction;
+                }
+
+                return next_index;
+            },
             next: function() {
-                this.set_current(this.current === false ? 0 : this.current + 1);
+                this.set_current(this.find_next(1));
             },
             prev: function() {
-                this.set_current(this.current === false ? -1 : this.current - 1);
+                this.set_current(this.find_next(-1));
             },
             /**
              * Selects the currently highlighted value.
@@ -118,6 +147,8 @@ define(['lodash', 'jquery'], function(_, $) {
 
                         if (!this.is_multiple) {
                             this.close();
+                        } else {
+                            this.focus();
                         }
                     }
                 }
@@ -145,6 +176,8 @@ define(['lodash', 'jquery'], function(_, $) {
                 }
                 if (_.isEmpty(this.value)) {
                     this.close();
+                } else {
+                    this.focus();
                 }
             },
             pretty: function(item) {
