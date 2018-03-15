@@ -3,7 +3,7 @@ define(['lodash', 'jquery'], function(_, $) {
 
     return {
         template: "[[vue_selectbox.html]]",
-        props: ['candidates', 'name', 'placeholder', 'model', 'label', 'multiple', 'add'],
+        props: ['candidates', 'placeholder', 'model', 'label', 'multiple', 'add'],
         data: function() {
             return {
                 is_open: false,
@@ -35,10 +35,10 @@ define(['lodash', 'jquery'], function(_, $) {
                 return this.input && this.add;
             },
             safe_placeholder: function() {
-                return this.placeholder || "Suche...";
+                return this.placeholder || "Suche...";
             }
         },
-        created: function() {
+        mounted: function() {
             var self = this;
             $(document)
             .on('click close_selectboxes', function(e) {

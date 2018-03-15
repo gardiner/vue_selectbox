@@ -3,7 +3,7 @@ define(['lodash', 'jquery'], function(_, $) {
 
     return {
         template: "<div class='selectbox'><div class='inputframe' tabindex='0' v-on:click='activate' v-on:focus='activate'><span class='value' tabindex='-1' v-for='item in value'><div class='icon clear active' v-on:click='function(e) { unset_value(item); e.stopPropagation(); return false; }'></div>{{ pretty(item) }}</span><span class='placeholder' v-if='!has_value'>{{ is_open ? '&nbsp;' : safe_placeholder }}</span></div><div class='candidates' v-if='is_open'><input autocomplete='off' type='text' v-model='input' v-on:keydown.down='next' v-on:keydown.enter.prevent='select' v-on:keydown.esc='close' v-on:keydown.up='prev'><div :class='{active: is_add_visible}' class='icon add' v-on:click='add_candidate'></div><div :class='{active: input}' class='icon clear' v-on:click='close'></div><ul v-if='filtered_candidates.length &gt; 0'><li v-bind:class='{selected: is_selected(c), active: (current === $index)}' v-bind:title='pretty(c)' v-for='c, $index in filtered_candidates' v-on:click='select' v-on:mouseenter='set_current($index)'>{{ pretty(c) }}</li></ul></div></div>",
-        props: ['candidates', 'name', 'placeholder', 'model', 'label', 'multiple', 'add'],
+        props: ['candidates', 'placeholder', 'model', 'label', 'multiple', 'add'],
         data: function() {
             return {
                 is_open: false,
@@ -35,10 +35,10 @@ define(['lodash', 'jquery'], function(_, $) {
                 return this.input && this.add;
             },
             safe_placeholder: function() {
-                return this.placeholder || "Suche...";
+                return this.placeholder || "Suche...";
             }
         },
-        created: function() {
+        mounted: function() {
             var self = this;
             $(document)
             .on('click close_selectboxes', function(e) {
