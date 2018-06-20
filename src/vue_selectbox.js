@@ -3,7 +3,19 @@ define(['lodash', 'jquery'], function(_, $) {
 
     return {
         template: "[[vue_selectbox.html]]",
-        props: ['candidates', 'placeholder', 'model', 'label', 'multiple', 'add'],
+        props: [
+            'candidates',   //selectable items
+            'placeholder',  //placeholder text
+            'model',        //selected value
+            'label',        //item property for displaying and searching
+            'multiple',     //whether multiple items can be selected
+            'options'       //configuration options, see this.config
+        ],
+        //allows use of v-model directive
+        model: {
+            'prop': 'model',
+            'event': 'update'
+        },
         data: function() {
             return {
                 is_open: false,
@@ -13,6 +25,18 @@ define(['lodash', 'jquery'], function(_, $) {
             };
         },
         computed: {
+            /**
+             * Returns configuration as specified by options prop.
+             */
+            config: function() {
+                return _.assign({
+                    allow_adding: false,                //allows adding of new values. Triggers 'add' event
+                    close_after_select: !this.multiple, //closes the selectbox after selecting an item
+                    close_after_add: !this.multiple,    //closes the selectbox after adding an item
+                    close_after_deselect: true,         //closes the selectbox after deselecting the last item
+                    add_on_select: true                 //adds a new value when pressing enter
+                }, this.options);
+            },
             filtered_candidates: function() {
                 var self = this;
 
@@ -32,7 +56,7 @@ define(['lodash', 'jquery'], function(_, $) {
                 return !!this.multiple;
             },
             is_add_visible: function() {
-                return this.input && this.add;
+                return this.input && this.config.allow_adding;
             },
             safe_placeholder: function() {
                 return this.placeholder || "Suche...";
@@ -140,17 +164,19 @@ define(['lodash', 'jquery'], function(_, $) {
              */
             select: function() {
                 var selected;
-                if (this.current !== false) {
+                if (this.current !== false && this.filtered_candidates.length) {
                     selected = this.filtered_candidates[this.current];
                     if (!this.is_selected(selected)) {
                         this.set_value(selected);
 
-                        if (!this.is_multiple) {
+                        if (this.config.close_after_select) {
                             this.close();
                         } else {
                             this.focus();
                         }
                     }
+                } else if (this.config.add_on_select) {
+                    this.add_candidate();
                 }
             },
             /**
@@ -174,7 +200,7 @@ define(['lodash', 'jquery'], function(_, $) {
                     this.value = null;
                     this.$emit('update', this.value);
                 }
-                if (_.isEmpty(this.value)) {
+                if (_.isEmpty(this.value) && this.config.close_after_deselect) {
                     this.close();
                 } else {
                     this.focus();
@@ -187,10 +213,12 @@ define(['lodash', 'jquery'], function(_, $) {
                 return _.includes(this.value, item);
             },
             add_candidate: function() {
-                if (this.input) {
+                if (this.config.allow_adding && this.input) {
                     this.$emit('add', this.input);
-                    if (this.add == 'close') {
+                    if (this.config.close_after_add) {
                         this.close();
+                    } else {
+                        this.input = null;
                     }
                 }
             }

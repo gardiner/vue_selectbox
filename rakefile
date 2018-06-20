@@ -16,7 +16,7 @@ task :compile => [:prepare] + HTML + CSS do |t|
         html_source = File.open(html).read.gsub(/\n\s*/, "")
         Dir.glob('src/*.js').each { |js|
             updated = File.open(js).read.gsub("[[#{name}]]", html_source)
-            File.open(File.join('dist', File.basename(js)), 'w').write(updated)
+            File.open(File.join('dist', File.basename(js)), 'w'){ |f| f.write(updated) }
         }
     }
 end
