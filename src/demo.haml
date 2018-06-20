@@ -25,12 +25,12 @@
                         single2: null,
                         multiple: null,
                         continents: [
-                            {name: 'Antarctica'},
-                            {name: 'Asia'},
-                            {name: 'Australia'},
-                            {name: 'Europe'},
-                            {name: 'North America'},
-                            {name: 'South America'}
+                            {name: 'Antarctica', hemisphere: 'South'},
+                            {name: 'Asia', hemisphere: 'North'},
+                            {name: 'Australia', hemisphere: 'South'},
+                            {name: 'Europe', hemisphere: 'North'},
+                            {name: 'North America', hemisphere: 'North'},
+                            {name: 'South America', hemisphere: 'South'}
                         ]
                     }
                 }).$mount("#demo");
@@ -50,3 +50,10 @@
             %selectbox(:candidates="continents" label="name" v-on:update="(val) => single2 = val" v-on:add="(val) => continents.push(single2 = {name: val})" :model="single2" add="close" placeholder="Select...")
             %pre {{single2 || 'null'}}
 
+            %h2 Use custom list item markup
+            %selectbox(:candidates="continents" label="name" v-on:update="(val) => single2 = val" v-on:add="(val) => continents.push(single2 = {name: val})" :model="single2" add="close" placeholder="Select...")
+                %template(slot="selected" slot-scope="{item}")
+                    {{item.name}} ({{item.hemisphere}})
+                %template(slot="candidate" slot-scope="{item}")
+                    {{item.hemisphere}}: {{item.name}}
+            %pre {{single2 || 'null'}}
