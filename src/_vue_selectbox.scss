@@ -36,8 +36,9 @@ $linegrid: 1.5 !default;
 
         &.clear {
             position: absolute;
+            top: 0;
             right: 0.5em;
-            top: 0.2em;
+            padding: 0.2em 0;
 
             &:after {
                 content: $fa-var-search;
@@ -77,6 +78,7 @@ $linegrid: 1.5 !default;
         .clear {
             top: 0;
             right: 0;
+            padding: 0;
         }
 
         &:focus {
@@ -98,6 +100,7 @@ $linegrid: 1.5 !default;
         }
 
         ul {
+            position: relative; //necessary for correct scroll positioning
             margin: 0;
             padding: 0;
             list-style-type: none;
@@ -126,6 +129,68 @@ $linegrid: 1.5 !default;
             &:last-child {
                 border: none;
             }
+        }
+    }
+
+
+    &.pretty {
+        display: block;
+
+        .inputframe {
+            border: 1px solid #888;
+            border-radius: 3px;
+            background: #fafafa;
+
+            .placeholder {
+                display: inline-block;
+                margin: 0.1em 0;
+                padding: 1px 0; //compensate for value border
+            }
+
+            .value {
+                margin: 0.1em 0.5em 0.1em 0;
+                padding: 0 25px 0 5px;
+                border: 1px solid #999;
+                border-radius: 2px;
+
+                background: #f7f7f7;
+                background: -moz-linear-gradient(top, #f7f7f7 0%, #eaeaea 100%);
+                background: -webkit-linear-gradient(top, #f7f7f7 0%,#eaeaea 100%);
+                background: linear-gradient(to bottom, #f7f7f7 0%,#eaeaea 100%);
+                filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7f7f7', endColorstr='#eaeaea',GradientType=0 );
+
+                .clear {
+                    right: 0.27em;
+                }
+            }
+        }
+
+        .candidates {
+            font-size: 95%;
+            line-height: 1.7;
+
+            &,
+            ul {
+                border-color: #888;
+            }
+
+            ul {
+                li {
+                    color: #444;
+
+                    &.active {
+                        background: rgba(#666, 0.2);
+                    }
+
+                    &.selected {
+                        opacity: 0.3;
+                    }
+                }
+            }
+        }
+
+        .icon {
+            color: #555;
         }
     }
 }
