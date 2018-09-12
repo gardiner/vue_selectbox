@@ -1,4 +1,4 @@
-define(['lodash', 'jquery'], function(_, $) {
+define(['jquery'], function($) {
     "use strict";
 
     return {
@@ -29,19 +29,26 @@ define(['lodash', 'jquery'], function(_, $) {
              * Returns configuration as specified by options prop.
              */
             config: function() {
-                return _.assign({
-                    allow_adding: false,                //allows adding of new values. Triggers 'add' event
-                    close_after_select: !this.multiple, //closes the selectbox after selecting an item
-                    close_after_add: !this.multiple,    //closes the selectbox after adding an item
-                    close_after_deselect: true,         //closes the selectbox after deselecting the last item
-                    add_on_select: true                 //adds a new value when pressing enter
-                }, this.options);
+                var defaults = {
+                        allow_adding: false,                //allows adding of new values. Triggers 'add' event
+                        close_after_select: !this.multiple, //closes the selectbox after selecting an item
+                        close_after_add: !this.multiple,    //closes the selectbox after adding an item
+                        close_after_deselect: true,         //closes the selectbox after deselecting the last item
+                        add_on_select: true                 //adds a new value when pressing enter
+                    },
+                    key;
+                for (key in this.options) {
+                    if (Object.prototype.hasOwnProperty.call(this.options, key)) {
+                        defaults[key] = this.options[key];
+                    }
+                }
+                return defaults;
             },
             filtered_candidates: function() {
                 var self = this;
 
-                if (self.input) {
-                    return _.filter(self.candidates, function(item) {
+                if (self.input && self.candidates) {
+                    return self.candidates.filter(function(item) {
                         var label = self.pretty(item);
                         return label.toLowerCase().match(new RegExp(self.input.toLowerCase()));
                     });
@@ -50,7 +57,7 @@ define(['lodash', 'jquery'], function(_, $) {
                 }
             },
             has_value: function() {
-                return !_.isEmpty(this.value);
+                return this.value && this.value.length;
             },
             is_multiple: function() {
                 return !!this.multiple;
@@ -75,7 +82,7 @@ define(['lodash', 'jquery'], function(_, $) {
             model: {
                 handler: function(model) {
                     if (this.is_multiple) {
-                        this.value = model ? _.clone(model) : [];
+                        this.value = model ? Array.prototype.slice.call(model) : [];
                     } else {
                         this.value = model ? [model] : null;
                     }
@@ -207,10 +214,14 @@ define(['lodash', 'jquery'], function(_, $) {
                 }
             },
             pretty: function(item) {
-                return this.label ? _.get(item, this.label) : item;
+                if (this.label) {
+                    return item ? item[this.label] : undefined;
+                } else {
+                    return item;
+                }
             },
             is_selected: function(item) {
-                return _.includes(this.value, item);
+                return this.value && this.value.indexOf(item) !== -1;
             },
             add_candidate: function() {
                 if (this.config.allow_adding && this.input) {
