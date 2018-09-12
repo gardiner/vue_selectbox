@@ -59,7 +59,7 @@ define(['lodash', 'jquery'], function(_, $) {
                 return this.input && this.config.allow_adding;
             },
             safe_placeholder: function() {
-                return this.placeholder || "Suche...";
+                return this.placeholder || "Search...";
             }
         },
         mounted: function() {
