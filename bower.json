@@ -7,7 +7,6 @@
   "description": "vue.js dropdown/select for single-select and multi-select",
   "private": true,
   "dependencies": {
-    "font-awesome": "^4.7.0",
     "jquery": "^3.2.1",
   },
   "ignore": [

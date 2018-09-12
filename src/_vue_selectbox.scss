@@ -26,7 +26,6 @@ $linegrid: 1.5 !default;
     }
 
     .icon {
-        @include fa-icon;
         color: $blue;
         line-height: $linegrid;
 
@@ -41,11 +40,11 @@ $linegrid: 1.5 !default;
             padding: 0.2em 0;
 
             &:after {
-                content: $fa-var-search;
+                content: '▸';
             }
 
             &.active:after {
-                content: $fa-var-close;
+                content: '✖';
             }
         }
 
@@ -53,7 +52,7 @@ $linegrid: 1.5 !default;
             display: none;
 
             &:after {
-                content: $fa-var-plus;
+                content: '+';
             }
 
             &.active {
