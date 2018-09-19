@@ -1,6 +1,16 @@
 define(['jquery'], function($) {
     "use strict";
 
+    function array_clone(array) {
+        return Array.prototype.slice.call(array);
+    }
+
+    function array_without(array, value) {
+        var clone = array_clone(array);
+        Array.prototype.splice.call(clone, clone.indexOf(value), 1);
+        return clone;
+    }
+
     return {
         template: "[[vue_selectbox.html]]",
         props: [
@@ -82,7 +92,7 @@ define(['jquery'], function($) {
             model: {
                 handler: function(model) {
                     if (this.is_multiple) {
-                        this.value = model ? Array.prototype.slice.call(model) : [];
+                        this.value = model ? array_clone(model) : [];
                     } else {
                         this.value = model ? [model] : null;
                     }
@@ -201,13 +211,13 @@ define(['jquery'], function($) {
             },
             unset_value: function(value) {
                 if (this.is_multiple) {
-                    this.value = _.without(this.value, value);
+                    this.value = array_without(this.value, value);
                     this.$emit('update', this.value);
                 } else {
                     this.value = null;
                     this.$emit('update', this.value);
                 }
-                if (_.isEmpty(this.value) && this.config.close_after_deselect) {
+                if (!this.has_value && this.config.close_after_deselect) {
                     this.close();
                 } else {
                     this.focus();

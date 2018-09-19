@@ -1,6 +1,16 @@
 define(['jquery'], function($) {
     "use strict";
 
+    function array_clone(array) {
+        return Array.prototype.slice.call(array);
+    }
+
+    function array_without(array, value) {
+        var clone = array_clone(array);
+        Array.prototype.splice.call(clone, clone.indexOf(value), 1);
+        return clone;
+    }
+
     return {
         template: "<div class='selectbox'><div class='inputframe' tabindex='0' v-on:click='activate' v-on:focus='activate'><span class='value' tabindex='-1' v-for='item in value'><div class='icon clear active' v-on:click='function(e) { unset_value(item); e.stopPropagation(); return false; }'></div><slot :item='item' name='selected'>{{ pretty(item) }}</slot></span><span class='placeholder' v-if='!has_value'>{{ is_open ? '&nbsp;' : safe_placeholder }}</span><div :class='{active: !is_open}' class='icon open'></div></div><div class='candidates' v-if='is_open'><div class='input'><input autocomplete='off' type='text' v-model='input' v-on:keydown.down='next' v-on:keydown.enter.prevent='select' v-on:keydown.esc='close' v-on:keydown.up='prev'><div :class='{active: is_add_visible}' class='icon add' v-on:click='add_candidate'></div><div :class='{active: input}' class='icon clear' v-on:click='close'></div></div><ul v-if='filtered_candidates.length &gt; 0'><li v-bind:class='{selected: is_selected(c), active: (current === $index)}' v-bind:title='pretty(c)' v-for='c, $index in filtered_candidates' v-on:click='select' v-on:mouseenter='set_current($index)'><slot :item='c' name='candidate'>{{ pretty(c) }}</slot></li></ul></div></div>",
         props: [
@@ -82,7 +92,7 @@ define(['jquery'], function($) {
             model: {
                 handler: function(model) {
                     if (this.is_multiple) {
-                        this.value = model ? Array.prototype.slice.call(model) : [];
+                        this.value = model ? array_clone(model) : [];
                     } else {
                         this.value = model ? [model] : null;
                     }
@@ -201,13 +211,13 @@ define(['jquery'], function($) {
             },
             unset_value: function(value) {
                 if (this.is_multiple) {
-                    this.value = _.without(this.value, value);
+                    this.value = array_without(this.value, value);
                     this.$emit('update', this.value);
                 } else {
                     this.value = null;
                     this.$emit('update', this.value);
                 }
-                if (_.isEmpty(this.value) && this.config.close_after_deselect) {
+                if (!this.has_value && this.config.close_after_deselect) {
                     this.close();
                 } else {
                     this.focus();
