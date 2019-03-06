@@ -1,0 +1,24 @@
+{
+  "name": "vue_selectbox",
+  "version": "0.1.1",
+  "description": "vue.js dropdown/select for single-select and multi-select",
+  "keywords": [
+    "vue.js",
+    "selectbox"
+  ],
+  "main": "dist/vue_selectbox.js",
+  "scripts": {
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gardiner/vue_selectbox.git"
+  },
+  "author": "Ole Trenner <ole.trenner@3dbits.de>",
+  "bugs": {
+    "url": "https://github.com/gardiner/vue_selectbox/issues"
+  },
+  "dependencies": {
+    "jquery": "^3.2.1"
+  },
+  "homepage": "https://github.com/gardiner/vue_selectbox#readme"
+}
