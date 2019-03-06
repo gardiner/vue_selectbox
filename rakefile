@@ -11,13 +11,17 @@ task :default => [:watch]
 
 desc 'Compiles HAML and SCSS resources'
 task :compile => [:prepare] + HTML + CSS do |t|
-    Dir.glob('build/*.html').each { |html|
+    templates = Dir.glob('build/*.html').map { |html|
         name = File.basename(html)
-        html_source = File.open(html).read.gsub(/\n\s*/, "")
-        Dir.glob('src/*.js').each { |js|
-            updated = File.open(js).read.gsub("[[#{name}]]", html_source)
-            File.open(File.join('dist', File.basename(js)), 'w'){ |f| f.write(updated) }
+        minified = File.open(html).read.gsub(/\n\s*/, "")
+        [name, minified]
+    }.to_h
+    Dir.glob('src/*.js').each { |js|
+        source = File.open(js).read
+        templates.each { |name, template|
+            source.gsub!("[[#{name}]]", template)
         }
+        File.open(File.join('dist', File.basename(js)), 'w').write(source)
     }
 end
 

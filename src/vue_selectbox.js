@@ -40,6 +40,7 @@ define(['jquery'], function($) {
              */
             config: function() {
                 var defaults = {
+                        show_filter_input: true,            //show filter input to filter candidates
                         allow_adding: false,                //allows adding of new values. Triggers 'add' event
                         close_after_select: !this.multiple, //closes the selectbox after selecting an item
                         close_after_add: !this.multiple,    //closes the selectbox after adding an item
