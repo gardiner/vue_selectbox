@@ -8,7 +8,7 @@
         .icon.open(:class="{active: !is_open}")
 
     .candidates(v-if="is_open")
-        .input(v-if="options.show_filter_input")
+        .input(v-if="config.show_filter_input")
             %input{"type"=>"text", "v-on:keydown.up"=>"prev", "v-on:keydown.down"=>"next", "v-on:keydown.enter.prevent"=>"select", "v-on:keydown.esc"=>"close", "v-model"=>"input", "autocomplete"=>"off"}
             .icon.add(:class="{active: is_add_visible}" v-on:click="add_candidate")
             .icon.clear(:class="{active: input}" v-on:click="close")
