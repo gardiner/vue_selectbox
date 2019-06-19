@@ -17,7 +17,7 @@ define(['jquery'], function($) {
             'candidates',   //selectable items
             'placeholder',  //placeholder text
             'model',        //selected value
-            'label',        //item property for displaying and searching
+            'label',        //item property (string) or callback (function) for displaying and searching
             'multiple',     //whether multiple items can be selected
             'options'       //configuration options, see this.config
         ],
@@ -225,7 +225,9 @@ define(['jquery'], function($) {
                 }
             },
             pretty: function(item) {
-                if (this.label) {
+                if ($.type(this.label) === 'function') {
+                    return item ? this.label.call(null, item) : undefined;
+                } else if ($.type(this.label) === 'string') {
                     return item ? item[this.label] : undefined;
                 } else {
                     return item;
