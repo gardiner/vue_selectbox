@@ -60,8 +60,10 @@ define(['jquery'], function($) {
 
                 if (self.input && self.candidates) {
                     return self.candidates.filter(function(item) {
-                        var label = self.pretty(item);
-                        return label.toLowerCase().match(new RegExp(self.input.toLowerCase()));
+                        var label = self.pretty(item),
+                            input = self.input.toLowerCase(),
+                            escapedInput = input.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+                        return label.toLowerCase().match(escapedInput);
                     });
                 } else {
                     return self.candidates;

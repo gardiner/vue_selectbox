@@ -47,6 +47,24 @@ task :watch => [:compile] do |t|
 end
 
 
+desc 'Update version. Use with caution, might change unrelated code areas. Usage: rake version version=0.0.2'
+task :version do |t|
+    current_version = (File.exist? 'VERSION') ? File.open('VERSION').read.strip : "0.0.1"
+    new_version = ENV['version']
+
+    if !new_version then
+        puts "Usage: rake version version=NEW_VERSION. Current version: #{current_version}"
+    else
+        ['bower.json','package.json'].each { |f|
+            updated = File.open(f).read.gsub(current_version, new_version)
+            File.open(f, 'w').write(updated)
+        }
+        File.open('VERSION', 'w').write(new_version)
+    end
+end
+
+
+
 
 rule '.html' => lambda { |dest| HAML.find { |f| File.basename(f, '.haml') == File.basename(dest, '.html') } } do |t|
     puts "Rebuilding #{t.name} from #{t.source}"
