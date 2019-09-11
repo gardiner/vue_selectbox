@@ -43,6 +43,7 @@ define(['jquery'], function($) {
                 var defaults = {
                         show_filter_input: true,            //show filter input to filter candidates
                         allow_adding: false,                //allows adding of new values. Triggers 'add' event
+                        allow_deselect_from_list: false,    //allows deselecting items from the candidates list
                         close_after_select: !this.multiple, //closes the selectbox after selecting an item
                         close_after_add: !this.multiple,    //closes the selectbox after adding an item
                         close_after_deselect: true,         //closes the selectbox after deselecting the last item
@@ -145,7 +146,7 @@ define(['jquery'], function($) {
             set_current: function(index) {
                 var num = this.filtered_candidates.length;
 
-                if (index === false || this.is_selected(this.get_by_index(index))) {
+                if (index === false || (this.is_selected(this.get_by_index(index)) && !this.config.allow_deselect_from_list)) {
                     this.current = false;
                 } else {
                     this.current = (index + num) % num;
@@ -205,12 +206,13 @@ define(['jquery'], function($) {
                     selected = this.filtered_candidates[this.current];
                     if (!this.is_selected(selected)) {
                         this.set_value(selected);
-
-                        if (this.config.close_after_select) {
-                            this.close();
-                        } else {
-                            this.focus();
-                        }
+                    } else if (this.config.allow_deselect_from_list) {
+                        this.unset_value(selected);
+                    }
+                    if (this.config.close_after_select) {
+                        this.close();
+                    } else {
+                        this.focus();
                     }
                 } else if (this.config.add_on_select) {
                     this.add_candidate();

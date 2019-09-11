@@ -42,7 +42,7 @@
             %pre {{single1 || 'null'}}
 
             %h2 Multi Select
-            %selectbox(:candidates="continents" label="name" v-model="multiple" multiple="multiple" placeholder="Select Multiple..." all_label="All Continents" :options="{combine_all: true}")
+            %selectbox(:candidates="continents" label="name" v-model="multiple" multiple="multiple" placeholder="Select Multiple..." all_label="All Continents" :options="{combine_all: true, allow_deselect_from_list: true}")
             %pre {{multiple || '[]'}}
 
             %h2 Add new options

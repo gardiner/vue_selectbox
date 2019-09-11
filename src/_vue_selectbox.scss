@@ -139,6 +139,10 @@ $linegrid: 1.5 !default;
                 cursor: default;
             }
 
+            &.deselectable {
+                cursor: pointer;
+            }
+
             &:last-child {
                 border: none;
             }
