@@ -1,6 +1,6 @@
 {
   "name": "vue_selectbox",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "vue.js dropdown/select for single-select and multi-select",
   "keywords": [
     "vue.js",
