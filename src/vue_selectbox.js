@@ -82,7 +82,7 @@ define(['jquery'], function($) {
             is_all_selected: function() {
                 var self = this,
                     i;
-                if (self.is_multiple) {
+                if (self.is_multiple && self.candidates && self.candidates.length) {
                     for (i = 0; i < self.candidates.length; i++) {
                         if (!self.is_selected(self.candidates[i])) {
                             return false;
