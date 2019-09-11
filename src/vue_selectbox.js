@@ -46,7 +46,8 @@ define(['jquery'], function($) {
                         close_after_select: !this.multiple, //closes the selectbox after selecting an item
                         close_after_add: !this.multiple,    //closes the selectbox after adding an item
                         close_after_deselect: true,         //closes the selectbox after deselecting the last item
-                        add_on_select: true                 //adds a new value when pressing enter
+                        add_on_select: true,                //adds a new value when pressing enter
+                        combine_all: false                  //if all available items are selected, show single value
                     },
                     key;
                 for (key in this.options) {
@@ -75,6 +76,18 @@ define(['jquery'], function($) {
             },
             is_multiple: function() {
                 return !!this.multiple;
+            },
+            is_all_selected: function() {
+                var self = this,
+                    i;
+                if (self.is_multiple) {
+                    for (i = 0; i < self.candidates.length; i++) {
+                        if (!self.is_selected(self.candidates[i])) {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
             },
             is_add_visible: function() {
                 return this.input && this.config.allow_adding;
@@ -214,6 +227,7 @@ define(['jquery'], function($) {
                     }
                 });
                 self.$emit('update', self.value);
+                self.close();
             },
             /**
              * Updates the value and emits event.
@@ -236,6 +250,15 @@ define(['jquery'], function($) {
                     this.value = null;
                     this.$emit('update', this.value);
                 }
+                if (!this.has_value && this.config.close_after_deselect) {
+                    this.close();
+                } else {
+                    this.focus();
+                }
+            },
+            unset_all: function() {
+                this.value = this.is_multiple ? [] : null;
+                this.$emit('update', this.value);
                 if (!this.has_value && this.config.close_after_deselect) {
                     this.close();
                 } else {

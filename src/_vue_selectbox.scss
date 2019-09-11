@@ -132,9 +132,11 @@ $linegrid: 1.5 !default;
                 background: rgba($blue, 0.2);
             }
 
-            &.selected {
+            &.selected,
+            &.disabled {
                 color: rgba($gray, 0.2);
-                background: none;
+                background: none !important;
+                cursor: default;
             }
 
             &:last-child {
