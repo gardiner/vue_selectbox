@@ -122,6 +122,12 @@ $linegrid: 1.5 !default;
             white-space: nowrap;
             text-overflow: ellipsis;
 
+            &.all_items {
+                text-align: right;
+                font-style: italic;
+            }
+
+            &.all_items:hover,
             &.active {
                 background: rgba($blue, 0.2);
             }

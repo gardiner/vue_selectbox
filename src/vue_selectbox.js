@@ -16,6 +16,7 @@ define(['jquery'], function($) {
         props: [
             'candidates',   //selectable items
             'placeholder',  //placeholder text
+            'all_label',    //label/placeholder for "all items"
             'model',        //selected value
             'label',        //item property (string) or callback (function) for displaying and searching
             'multiple',     //whether multiple items can be selected
@@ -80,6 +81,9 @@ define(['jquery'], function($) {
             },
             safe_placeholder: function() {
                 return this.placeholder || "Search...";
+            },
+            safe_all_label: function() {
+                return this.all_label || "All items";
             }
         },
         mounted: function() {
@@ -129,7 +133,7 @@ define(['jquery'], function($) {
                 var num = this.filtered_candidates.length;
 
                 if (index === false || this.is_selected(this.get_by_index(index))) {
-                    this.current === false;
+                    this.current = false;
                 } else {
                     this.current = (index + num) % num;
                 }
@@ -198,6 +202,18 @@ define(['jquery'], function($) {
                 } else if (this.config.add_on_select) {
                     this.add_candidate();
                 }
+            },
+            /**
+             * Adds all currently visible items to selection.
+             */
+            select_filtered: function() {
+                var self = this;
+                self.filtered_candidates.forEach(function(candidate) {
+                    if (!self.is_selected(candidate)) {
+                        self.value.push(candidate);
+                    }
+                });
+                self.$emit('update', self.value);
             },
             /**
              * Updates the value and emits event.

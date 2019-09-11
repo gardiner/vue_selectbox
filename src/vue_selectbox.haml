@@ -14,6 +14,7 @@
             .icon.clear(:class="{active: input}" v-on:click="close")
 
         %ul(v-if="filtered_candidates.length > 0")
+            %li.all_items(v-if="is_multiple" v-on:mouseenter="set_current(false)" v-on:click="select_filtered") {{safe_all_label}}…
             %li(v-for="c, $index in filtered_candidates" v-bind:class="{selected: is_selected(c), active: (current === $index)}" v-on:mouseenter="set_current($index)" v-on:click="select" v-bind:title="pretty(c)")
                 %slot(name="candidate" :item="c")
                     {{ pretty(c) }}
