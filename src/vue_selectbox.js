@@ -20,6 +20,7 @@ define(['jquery'], function($) {
             'model',        //selected value
             'label',        //item property (string) or callback (function) for displaying and searching
             'multiple',     //whether multiple items can be selected
+            'disabled',     //whether the select is active and can be used
             'options'       //configuration options, see this.config
         ],
         //allows use of v-model directive
@@ -123,6 +124,9 @@ define(['jquery'], function($) {
         },
         methods: {
             activate: function($event) {
+                if (this.disabled) {
+                    return;
+                }
                 $(document).trigger('close_selectboxes');
                 if (!$event || ($event.keyCode !== 13 && $event.keyCode !== 27)) {
                     this.is_open = true;
@@ -132,7 +136,9 @@ define(['jquery'], function($) {
             },
             focus: function() {
                 var self = this;
-
+                if (this.disabled) {
+                    return;
+                }
                 window.setTimeout(function() { $(self.$el).find('input').focus(); });
             },
             close: function() {

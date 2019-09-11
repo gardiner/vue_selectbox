@@ -1,19 +1,19 @@
-.selectbox
+.selectbox(v-bind:class="{disabled: disabled}")
     .inputframe(v-on:click="activate" v-on:focus="activate" tabindex="0")
         %template(v-if="!has_value")
-            %span.placeholder {{ is_open ? '&nbsp;' : safe_placeholder }}
+            %span.placeholder {{ is_open || disabled ? '&nbsp;' : safe_placeholder }}
         %template(v-else-if="config.combine_all && is_multiple && is_all_selected")
             %span.value
-                .icon.clear.active(v-on:click="function(e) { unset_all(); e.stopPropagation(); return false; }")
+                .icon.clear.active(v-if="!disabled" v-on:click="function(e) { unset_all(); e.stopPropagation(); return false; }")
                 {{ safe_all_label }}
         %template(v-else)
             %span.value(v-for="item in value" tabindex="-1")
-                .icon.clear.active(v-on:click="function(e) { unset_value(item); e.stopPropagation(); return false; }")
+                .icon.clear.active(v-if="!disabled" v-on:click="function(e) { unset_value(item); e.stopPropagation(); return false; }")
                 %slot(name="selected" :item="item")
                     {{ pretty(item) }}
-        .icon.open(:class="{active: !is_open}")
+        .icon.open(:class="{active: !is_open && !disabled}")
 
-    .candidates(v-if="is_open")
+    .candidates(v-if="is_open && !disabled")
         .input(v-if="config.show_filter_input")
             %input{"type"=>"text", "v-on:keydown.up"=>"prev", "v-on:keydown.down"=>"next", "v-on:keydown.enter.prevent"=>"select", "v-on:keydown.esc"=>"close", "v-model"=>"input", "autocomplete"=>"off"}
             .icon.add(:class="{active: is_add_visible}" v-on:click="add_candidate")

@@ -149,6 +149,10 @@ $linegrid: 1.5 !default;
         }
     }
 
+    &.disabled {
+        opacity: 0.5;
+    }
+
 
     &.pretty {
         display: block;

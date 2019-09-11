@@ -12,7 +12,7 @@ define(['jquery'], function($) {
     }
 
     return {
-        template: "<div class='selectbox'><div class='inputframe' tabindex='0' v-on:click='activate' v-on:focus='activate'><template v-if='!has_value'><span class='placeholder'>{{ is_open ? '&nbsp;' : safe_placeholder }}</span></template><template v-else-if='config.combine_all &amp;&amp; is_multiple &amp;&amp; is_all_selected'><span class='value'><div class='icon clear active' v-on:click='function(e) { unset_all(); e.stopPropagation(); return false; }'></div>{{ safe_all_label }}</span></template><template v-else><span class='value' tabindex='-1' v-for='item in value'><div class='icon clear active' v-on:click='function(e) { unset_value(item); e.stopPropagation(); return false; }'></div><slot :item='item' name='selected'>{{ pretty(item) }}</slot></span></template><div :class='{active: !is_open}' class='icon open'></div></div><div class='candidates' v-if='is_open'><div class='input' v-if='config.show_filter_input'><input autocomplete='off' type='text' v-model='input' v-on:keydown.down='next' v-on:keydown.enter.prevent='select' v-on:keydown.esc='close' v-on:keydown.up='prev'><div :class='{active: is_add_visible}' class='icon add' v-on:click='add_candidate'></div><div :class='{active: input}' class='icon clear' v-on:click='close'></div></div><ul v-if='filtered_candidates.length &gt; 0'><li class='all_items' v-bind:class='{disabled: is_all_selected}' v-if='is_multiple' v-on:click='select_filtered' v-on:mouseenter='set_current(false)'>{{ safe_all_label }}…</li><li v-bind:class='{selected: is_selected(c), active: (current === $index), deselectable: config.allow_deselect_from_list}' v-bind:title='pretty(c)' v-for='c, $index in filtered_candidates' v-on:click='select' v-on:mouseenter='set_current($index)'><slot :item='c' name='candidate'>{{ pretty(c) }}</slot></li></ul></div></div>",
+        template: "<div class='selectbox' v-bind:class='{disabled: disabled}'><div class='inputframe' tabindex='0' v-on:click='activate' v-on:focus='activate'><template v-if='!has_value'><span class='placeholder'>{{ is_open || disabled ? '&nbsp;' : safe_placeholder }}</span></template><template v-else-if='config.combine_all &amp;&amp; is_multiple &amp;&amp; is_all_selected'><span class='value'><div class='icon clear active' v-if='!disabled' v-on:click='function(e) { unset_all(); e.stopPropagation(); return false; }'></div>{{ safe_all_label }}</span></template><template v-else><span class='value' tabindex='-1' v-for='item in value'><div class='icon clear active' v-if='!disabled' v-on:click='function(e) { unset_value(item); e.stopPropagation(); return false; }'></div><slot :item='item' name='selected'>{{ pretty(item) }}</slot></span></template><div :class='{active: !is_open &amp;&amp; !disabled}' class='icon open'></div></div><div class='candidates' v-if='is_open &amp;&amp; !disabled'><div class='input' v-if='config.show_filter_input'><input autocomplete='off' type='text' v-model='input' v-on:keydown.down='next' v-on:keydown.enter.prevent='select' v-on:keydown.esc='close' v-on:keydown.up='prev'><div :class='{active: is_add_visible}' class='icon add' v-on:click='add_candidate'></div><div :class='{active: input}' class='icon clear' v-on:click='close'></div></div><ul v-if='filtered_candidates.length &gt; 0'><li class='all_items' v-bind:class='{disabled: is_all_selected}' v-if='is_multiple' v-on:click='select_filtered' v-on:mouseenter='set_current(false)'>{{ safe_all_label }}…</li><li v-bind:class='{selected: is_selected(c), active: (current === $index), deselectable: config.allow_deselect_from_list}' v-bind:title='pretty(c)' v-for='c, $index in filtered_candidates' v-on:click='select' v-on:mouseenter='set_current($index)'><slot :item='c' name='candidate'>{{ pretty(c) }}</slot></li></ul></div></div>",
         props: [
             'candidates',   //selectable items
             'placeholder',  //placeholder text
@@ -20,6 +20,7 @@ define(['jquery'], function($) {
             'model',        //selected value
             'label',        //item property (string) or callback (function) for displaying and searching
             'multiple',     //whether multiple items can be selected
+            'disabled',     //whether the select is active and can be used
             'options'       //configuration options, see this.config
         ],
         //allows use of v-model directive
@@ -123,6 +124,9 @@ define(['jquery'], function($) {
         },
         methods: {
             activate: function($event) {
+                if (this.disabled) {
+                    return;
+                }
                 $(document).trigger('close_selectboxes');
                 if (!$event || ($event.keyCode !== 13 && $event.keyCode !== 27)) {
                     this.is_open = true;
@@ -132,7 +136,9 @@ define(['jquery'], function($) {
             },
             focus: function() {
                 var self = this;
-
+                if (this.disabled) {
+                    return;
+                }
                 window.setTimeout(function() { $(self.$el).find('input').focus(); });
             },
             close: function() {

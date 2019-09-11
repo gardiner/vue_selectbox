@@ -56,3 +56,7 @@
                 %template(slot="candidate" slot-scope="{item}")
                     {{item.hemisphere}}: {{item.name}}
             %pre {{single2 || 'null'}}
+
+            %h2 Disabled Select
+            %selectbox(:candidates="continents" label="name" v-model="multiple" :multiple="true" placeholder="Select..." :disabled="true")
+
