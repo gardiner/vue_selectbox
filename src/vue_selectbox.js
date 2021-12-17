@@ -49,6 +49,7 @@ define(['jquery'], function($) {
                         close_after_add: !this.multiple,    //closes the selectbox after adding an item
                         close_after_deselect: true,         //closes the selectbox after deselecting the last item
                         add_on_select: true,                //adds a new value when pressing enter
+                        allow_select_all: true,             //allows seleting all items with a single click
                         combine_all: false                  //if all available items are selected, show single value
                     },
                     key;
