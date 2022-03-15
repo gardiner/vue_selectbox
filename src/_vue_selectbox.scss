@@ -135,7 +135,6 @@ $linegrid: 1.5 !default;
             &.selected,
             &.disabled {
                 color: rgba($gray, 0.2);
-                background: none !important;
                 cursor: default;
             }
 

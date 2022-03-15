@@ -8,7 +8,7 @@
             requirejs.config({
                 paths: {
                     "jquery": "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min",
-                    "vue": "https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.3/vue.min",
+                    "vue": "https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.3/vue",
                     "vue_selectbox": "../dist/vue_selectbox"
                 }
             });
@@ -22,6 +22,7 @@
                     data: {
                         single1: null,
                         single2: null,
+                        single3: null,
                         multiple: null,
                         continents: [
                             {name: 'Antarctica', hemisphere: 'South'},
@@ -40,6 +41,10 @@
             %h2 Single Select
             %selectbox(:candidates="continents" label="name" v-model="single1" placeholder="Select...")
             %pre {{single1 || 'null'}}
+
+            %h2 Disable options
+            %selectbox(:candidates="continents" label="name" v-model="single3" placeholder="Select..." :options="{is_selectable: function(item) { return item.name != 'Australia'; }}")
+            %pre {{single3 || 'null'}}
 
             %h2 Multi Select
             %selectbox(:candidates="continents" label="name" v-model="multiple" multiple="multiple" placeholder="Select Multiple..." all_label="All Continents" :options="{combine_all: true, allow_deselect_from_list: true}")

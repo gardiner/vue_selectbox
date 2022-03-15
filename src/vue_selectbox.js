@@ -49,8 +49,9 @@ define(['jquery'], function($) {
                         close_after_add: !this.multiple,    //closes the selectbox after adding an item
                         close_after_deselect: true,         //closes the selectbox after deselecting the last item
                         add_on_select: true,                //adds a new value when pressing enter
-                        allow_select_all: true,             //allows seleting all items with a single click
-                        combine_all: false                  //if all available items are selected, show single value
+                        allow_select_all: true,             //allows selecting all items with a single click
+                        combine_all: false,                 //if all available items are selected, show single value
+                        is_selectable: null,                //callback: returns true if an item is selectable, false otherwise
                     },
                     key;
                 for (key in this.options) {
@@ -211,7 +212,9 @@ define(['jquery'], function($) {
                 var selected;
                 if (this.current !== false && this.filtered_candidates.length) {
                     selected = this.filtered_candidates[this.current];
-                    if (!this.is_selected(selected)) {
+                    if (!this.is_selectable(selected)) {
+                        return;
+                    } else if (!this.is_selected(selected)) {
                         this.set_value(selected);
                     } else if (this.config.allow_deselect_from_list) {
                         this.unset_value(selected);
@@ -231,7 +234,7 @@ define(['jquery'], function($) {
             select_filtered: function() {
                 var self = this;
                 self.filtered_candidates.forEach(function(candidate) {
-                    if (!self.is_selected(candidate)) {
+                    if (!self.is_selected(candidate) && self.is_selectable(candidate)) {
                         self.value.push(candidate);
                     }
                 });
@@ -282,6 +285,9 @@ define(['jquery'], function($) {
                 } else {
                     return item;
                 }
+            },
+            is_selectable: function(item) {
+                return this.config.is_selectable ? this.config.is_selectable.call(this, item) : true;
             },
             is_selected: function(item) {
                 return this.value && this.value.indexOf(item) !== -1;
