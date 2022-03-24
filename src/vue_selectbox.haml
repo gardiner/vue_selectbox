@@ -7,8 +7,9 @@
                 .icon.clear.active(v-if="!disabled" v-on:click="function(e) { unset_all(); e.stopPropagation(); return false; }")
                 {{ safe_all_label }}
         %template(v-else)
-            %span.value(v-for="item in value" tabindex="-1")
-                .icon.clear.active(v-if="!disabled" v-on:click="function(e) { unset_value(item); e.stopPropagation(); return false; }")
+            %span.value(v-for="item in value" tabindex="-1" v-bind:class="{undeselectable: !is_deselectable(item)}")
+                .icon.clear.active(v-if="!disabled && is_deselectable(item)"
+                                   v-on:click="function(e) { unset_value(item); e.stopPropagation(); return false; }")
                 %slot(name="selected" :item="item")
                     {{ pretty(item) }}
         .icon.open(:class="{active: !is_open && !disabled}")
@@ -26,7 +27,7 @@
                           v-bind:class="{disabled: is_all_selected,}")
                 {{ safe_all_label }}…
             %li(v-for="c, $index in filtered_candidates"
-                v-bind:class="{selected: is_selected(c), active: (current === $index), deselectable: config.allow_deselect_from_list, disabled: !is_selectable(c)}"
+                v-bind:class="{selected: is_selected(c), active: (current === $index), deselectable: config.allow_deselect_from_list && is_deselectable(c), disabled: !is_selectable(c)}"
                 v-on:mouseenter="set_current($index)"
                 v-on:click="select"
                 v-bind:title="pretty(c)")

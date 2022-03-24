@@ -12,7 +12,7 @@ define(['jquery'], function($) {
     }
 
     return {
-        template: "<div class='selectbox' v-bind:class='{disabled: disabled}'><div class='inputframe' tabindex='0' v-on:click='activate' v-on:focus='activate'><template v-if='!has_value'><span class='placeholder'>{{ is_open || disabled ? '&nbsp;' : safe_placeholder }}</span></template><template v-else-if='config.combine_all &amp;&amp; is_multiple &amp;&amp; is_all_selected'><span class='value'><div class='icon clear active' v-if='!disabled' v-on:click='function(e) { unset_all(); e.stopPropagation(); return false; }'></div>{{ safe_all_label }}</span></template><template v-else><span class='value' tabindex='-1' v-for='item in value'><div class='icon clear active' v-if='!disabled' v-on:click='function(e) { unset_value(item); e.stopPropagation(); return false; }'></div><slot :item='item' name='selected'>{{ pretty(item) }}</slot></span></template><div :class='{active: !is_open &amp;&amp; !disabled}' class='icon open'></div></div><div class='candidates' v-if='is_open &amp;&amp; !disabled'><div class='input' v-if='config.show_filter_input'><input autocomplete='off' type='text' v-model='input' v-on:keydown.down='next' v-on:keydown.enter.prevent='select' v-on:keydown.esc='close' v-on:keydown.up='prev'><div :class='{active: is_add_visible}' class='icon add' v-on:click='add_candidate'></div><div :class='{active: input}' class='icon clear' v-on:click='close'></div></div><ul v-if='filtered_candidates.length &gt; 0'><li class='all_items' v-bind:class='{disabled: is_all_selected,}' v-if='is_multiple &amp;&amp; config.allow_select_all' v-on:click='select_filtered' v-on:mouseenter='set_current(false)'>{{ safe_all_label }}…</li><li v-bind:class='{selected: is_selected(c), active: (current === $index), deselectable: config.allow_deselect_from_list, disabled: !is_selectable(c)}' v-bind:title='pretty(c)' v-for='c, $index in filtered_candidates' v-on:click='select' v-on:mouseenter='set_current($index)'><slot :item='c' name='candidate'>{{ pretty(c) }}</slot></li></ul></div></div>",
+        template: "<div class='selectbox' v-bind:class='{disabled: disabled}'><div class='inputframe' tabindex='0' v-on:click='activate' v-on:focus='activate'><template v-if='!has_value'><span class='placeholder'>{{ is_open || disabled ? '&nbsp;' : safe_placeholder }}</span></template><template v-else-if='config.combine_all &amp;&amp; is_multiple &amp;&amp; is_all_selected'><span class='value'><div class='icon clear active' v-if='!disabled' v-on:click='function(e) { unset_all(); e.stopPropagation(); return false; }'></div>{{ safe_all_label }}</span></template><template v-else><span class='value' tabindex='-1' v-bind:class='{undeselectable: !is_deselectable(item)}' v-for='item in value'><div class='icon clear active' v-if='!disabled &amp;&amp; is_deselectable(item)' v-on:click='function(e) { unset_value(item); e.stopPropagation(); return false; }'></div><slot :item='item' name='selected'>{{ pretty(item) }}</slot></span></template><div :class='{active: !is_open &amp;&amp; !disabled}' class='icon open'></div></div><div class='candidates' v-if='is_open &amp;&amp; !disabled'><div class='input' v-if='config.show_filter_input'><input autocomplete='off' type='text' v-model='input' v-on:keydown.down='next' v-on:keydown.enter.prevent='select' v-on:keydown.esc='close' v-on:keydown.up='prev'><div :class='{active: is_add_visible}' class='icon add' v-on:click='add_candidate'></div><div :class='{active: input}' class='icon clear' v-on:click='close'></div></div><ul v-if='filtered_candidates.length &gt; 0'><li class='all_items' v-bind:class='{disabled: is_all_selected,}' v-if='is_multiple &amp;&amp; config.allow_select_all' v-on:click='select_filtered' v-on:mouseenter='set_current(false)'>{{ safe_all_label }}…</li><li v-bind:class='{selected: is_selected(c), active: (current === $index), deselectable: config.allow_deselect_from_list &amp;&amp; is_deselectable(c), disabled: !is_selectable(c)}' v-bind:title='pretty(c)' v-for='c, $index in filtered_candidates' v-on:click='select' v-on:mouseenter='set_current($index)'><slot :item='c' name='candidate'>{{ pretty(c) }}</slot></li></ul></div></div>",
         props: [
             'candidates',   //selectable items
             'placeholder',  //placeholder text
@@ -43,6 +43,7 @@ define(['jquery'], function($) {
             config: function() {
                 var defaults = {
                         show_filter_input: true,            //show filter input to filter candidates
+                        reset_input_after_add: true,        //reset filter input after adding a value
                         allow_adding: false,                //allows adding of new values. Triggers 'add' event
                         allow_deselect_from_list: false,    //allows deselecting items from the candidates list
                         close_after_select: !this.multiple, //closes the selectbox after selecting an item
@@ -52,6 +53,7 @@ define(['jquery'], function($) {
                         allow_select_all: true,             //allows selecting all items with a single click
                         combine_all: false,                 //if all available items are selected, show single value
                         is_selectable: null,                //callback: returns true if an item is selectable, false otherwise
+                        is_deselectable: null,              //callback: returns true if an item is deselectable, false otherwise
                     },
                     key;
                 for (key in this.options) {
@@ -152,9 +154,12 @@ define(['jquery'], function($) {
              * Highlights the value with the specified index.
              */
             set_current: function(index) {
-                var num = this.filtered_candidates.length;
+                var num = this.filtered_candidates.length,
+                    value = this.get_by_index(index),
+                    is_selected = this.is_selected(value),
+                    is_deselectable = this.is_deselectable(value);
 
-                if (index === false || (this.is_selected(this.get_by_index(index)) && !this.config.allow_deselect_from_list)) {
+                if (index === false || (is_selected && (!is_deselectable || !this.config.allow_deselect_from_list))) {
                     this.current = false;
                 } else {
                     this.current = (index + num) % num;
@@ -212,9 +217,7 @@ define(['jquery'], function($) {
                 var selected;
                 if (this.current !== false && this.filtered_candidates.length) {
                     selected = this.filtered_candidates[this.current];
-                    if (!this.is_selectable(selected)) {
-                        return;
-                    } else if (!this.is_selected(selected)) {
+                    if (!this.is_selected(selected)) {
                         this.set_value(selected);
                     } else if (this.config.allow_deselect_from_list) {
                         this.unset_value(selected);
@@ -245,8 +248,12 @@ define(['jquery'], function($) {
              * Updates the value and emits event.
              */
             set_value: function(value) {
-                this.input = "";
-                if (this.is_multiple) {
+                if (this.config.reset_input_after_add) {
+                    this.input = "";
+                }
+                if (!this.is_selectable(value)) {
+                    return;
+                } else if (this.is_multiple) {
                     this.value.push(value);
                     this.$emit('update', this.value);
                 } else {
@@ -255,7 +262,9 @@ define(['jquery'], function($) {
                 }
             },
             unset_value: function(value) {
-                if (this.is_multiple) {
+                if (!this.is_deselectable(value)) {
+                    return;
+                } else if (this.is_multiple) {
                     this.value = array_without(this.value, value);
                     this.$emit('update', this.value);
                 } else {
@@ -269,6 +278,7 @@ define(['jquery'], function($) {
                 }
             },
             unset_all: function() {
+                //TODO: respect is_deselectable()
                 this.value = this.is_multiple ? [] : null;
                 this.$emit('update', this.value);
                 if (!this.has_value && this.config.close_after_deselect) {
@@ -288,6 +298,9 @@ define(['jquery'], function($) {
             },
             is_selectable: function(item) {
                 return this.config.is_selectable ? this.config.is_selectable.call(this, item) : true;
+            },
+            is_deselectable: function(item) {
+                return this.config.is_deselectable ? this.config.is_deselectable.call(this, item) : true;
             },
             is_selected: function(item) {
                 return this.value && this.value.indexOf(item) !== -1;
