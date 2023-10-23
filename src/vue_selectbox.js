@@ -68,10 +68,10 @@ define(['jquery'], function($) {
 
                 if (self.input && self.candidates) {
                     return self.candidates.filter(function(item) {
-                        var label = self.pretty(item),
+                        var label = self.pretty(item) || '',
                             input = self.input.toLowerCase(),
                             escapedInput = input.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-                        return label.toLowerCase().match(escapedInput);
+                        return label.toString().toLowerCase().match(escapedInput);
                     });
                 } else {
                     return self.candidates;

@@ -11,7 +11,8 @@
                 .icon.clear.active(v-if="!disabled && is_deselectable(item)"
                                    v-on:click="function(e) { unset_value(item); e.stopPropagation(); return false; }")
                 %slot(name="selected" :item="item")
-                    {{ pretty(item) }}
+                    %slot(name="candidate" :item="item")
+                        {{ pretty(item) }}
         .icon.open(:class="{active: !is_open && !disabled}")
 
     .candidates(v-if="is_open && !disabled")
