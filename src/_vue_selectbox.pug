@@ -18,6 +18,7 @@
     .candidates(v-if="is_open && !disabled")
         .input(v-if="config.show_filter_input")
             input(type="text"
+                  :placeholder="config.search_placeholder"
                   v-model="input"
                   v-on:keydown.up="prev"
                   v-on:keydown.down="next"

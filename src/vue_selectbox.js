@@ -53,6 +53,7 @@ module.exports = {
                     combine_all: false,                 //if all available items are selected, show single value
                     is_selectable: null,                //callback: returns true if an item is selectable, false otherwise
                     is_deselectable: null,              //callback: returns true if an item is deselectable, false otherwise
+                    search_placeholder: null,           //placeholder for search input element
                 },
                 key;
             for (key in this.options) {
