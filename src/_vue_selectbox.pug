@@ -1,0 +1,42 @@
+.vue_selectbox(v-bind:class="{disabled: disabled}")
+    .inputframe(v-on:click="activate" v-on:focus="activate" tabindex="0")
+        template(v-if="!has_value")
+            span.placeholder {{ is_open || disabled ? " " : safe_placeholder }}
+        template(v-else-if="config.combine_all && is_multiple && is_all_selected")
+            span.value
+                .icon.clear.active(v-if="!disabled" v-on:click="function(e) { unset_all(); e.stopPropagation(); return false; }")
+                |  {{ safe_all_label }}
+        template(v-else)
+            span.value(v-for="item in value" tabindex="-1" v-bind:class="{undeselectable: !is_deselectable(item)}")
+                .icon.clear.active(v-if="!disabled && is_deselectable(item)"
+                                   v-on:click="function(e) { unset_value(item); e.stopPropagation(); return false; }")
+                slot(name="selected" :item="item")
+                    slot(name="candidate" :item="item")
+                        | {{ pretty(item) }}
+        .icon.open(:class="{active: !is_open && !disabled}")
+
+    .candidates(v-if="is_open && !disabled")
+        .input(v-if="config.show_filter_input")
+            input(type="text"
+                  v-model="input"
+                  v-on:keydown.up="prev"
+                  v-on:keydown.down="next"
+                  v-on:keydown.enter.prevent="select"
+                  v-on:keydown.esc="close"
+                  autocomplete="off")
+            .icon.add(:class="{active: is_add_visible}" v-on:click="add_candidate")
+            .icon.clear(:class="{active: input}" v-on:click="close")
+
+        ul(v-if="filtered_candidates.length > 0")
+            li.all_items(v-if="is_multiple && config.allow_select_all"
+                         v-on:mouseenter="set_current(false)"
+                         v-on:click="select_filtered"
+                         v-bind:class="{disabled: is_all_selected,}")
+                | {{ safe_all_label }}…
+            li(v-for="c, $index in filtered_candidates"
+               v-bind:class="{selected: is_selected(c), active: (current === $index), deselectable: config.allow_deselect_from_list && is_deselectable(c), disabled: !is_selectable(c)}"
+               v-on:mouseenter="set_current($index)"
+               v-on:click="select"
+               v-bind:title="pretty(c)")
+                slot(name="candidate" :item="c")
+                    | {{ pretty(c) }}

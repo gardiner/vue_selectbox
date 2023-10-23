@@ -1,0 +1,62 @@
+doctype html
+html(lang="de")
+    head
+        link(href="demo.css" rel="stylesheet" type="text/css")
+        script(src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" type="text/javascript")
+        script(src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.14/vue.min.js" type="text/javascript")
+        script(src="../dist/vue_selectbox.js" type="text/javascript")
+        title Vue Selectbox Demo
+        script.
+            $(function() {
+                "use strict";
+
+                new Vue({
+                    components: {
+                        vue_selectbox,
+                    },
+                    data: {
+                        single1: null,
+                        single2: null,
+                        single3: null,
+                        multiple: null,
+                        continents: [
+                            {name: 'Antarctica', hemisphere: 'South'},
+                            {name: 'Asia', hemisphere: 'North'},
+                            {name: 'Australia', hemisphere: 'South'},
+                            {name: 'Europe', hemisphere: 'North'},
+                            {name: 'North America', hemisphere: 'North'},
+                            {name: 'South America', hemisphere: 'South'}
+                        ]
+                    }
+                }).$mount("#demo");
+            });
+
+    body
+        #demo(v-cloak)
+            h2 Single Select
+            vue_selectbox(:candidates="continents" label="name" v-model="single1" placeholder="Select...")
+            pre {{single1 || 'null'}}
+
+            h2 Disable options
+            vue_selectbox(:candidates="continents" label="name" v-model="single3" placeholder="Select..." :options="{is_selectable: function(item) { return item.name != 'Australia'; }}")
+            pre {{single3 || 'null'}}
+
+            h2 Multi Select
+            vue_selectbox(:candidates="continents" label="name" v-model="multiple" multiple="multiple" placeholder="Select Multiple..." all_label="All Continents" :options="{combine_all: true, allow_deselect_from_list: true}")
+            pre {{multiple || '[]'}}
+
+            h2 Add new options
+            vue_selectbox(:candidates="continents" label="name" v-on:add="(val) => continents.push(single2 = {name: val})" v-model="single2" placeholder="Select..." :options="{allow_adding: true, close_after_add: false}")
+            pre {{single2 || 'null'}}
+
+            h2 Use custom list item markup
+            vue_selectbox.pretty(:candidates="continents" label="name" v-on:add="(val) => continents.push(single2 = {name: val})" v-model="single2" placeholder="Select...")
+                template(slot="selected" slot-scope="{item}")
+                    | {{item.name}} ({{item.hemisphere}})
+                template(slot="candidate" slot-scope="{item}")
+                    | {{item.hemisphere}}: {{item.name}}
+            pre {{single2 || 'null'}}
+
+            h2 Disabled Select
+            vue_selectbox(:candidates="continents" label="name" v-model="multiple" :multiple="true" placeholder="Select..." :disabled="true")
+

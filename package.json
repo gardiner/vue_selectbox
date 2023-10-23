@@ -7,8 +7,7 @@
     "selectbox"
   ],
   "main": "dist/vue_selectbox.js",
-  "scripts": {
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/gardiner/vue_selectbox.git"
@@ -20,5 +19,16 @@
   "dependencies": {
     "jquery": "^3.2.1"
   },
-  "homepage": "https://github.com/gardiner/vue_selectbox#readme"
+  "homepage": "https://github.com/gardiner/vue_selectbox#readme",
+  "devDependencies": {
+    "gulp": "^4.0.2",
+    "gulp-connect": "^5.7.0",
+    "gulp-pug": "^5.0.0",
+    "gulp-sass": "^5.1.0",
+    "html-loader": "^4.2.0",
+    "pug": "^3.0.2",
+    "sass": "^1.69.4",
+    "webpack": "^5.89.0",
+    "webpack-stream": "^7.0.0"
+  }
 }

@@ -2,4 +2,8 @@
 .DS_Store
 .sass-cache
 bower_components
+node_modules
 build
+*.js.map
+*.js.LICENSE.txt
+package-lock.json
