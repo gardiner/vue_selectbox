@@ -49,7 +49,7 @@ html(lang="de")
             vue_selectbox(:candidates="continents" label="name" v-on:add="(val) => continents.push(single2 = {name: val})" v-model="single2" placeholder="Select..." :options="{allow_adding: true, close_after_add: false}")
             pre {{single2 || 'null'}}
 
-            h2 Use custom list item markup
+            h2 Use custom list item markup and custom styles
             vue_selectbox.pretty(:candidates="continents" label="name" v-on:add="(val) => continents.push(single2 = {name: val})" v-model="single2" placeholder="Select...")
                 template(slot="selected" slot-scope="{item}")
                     | {{item.name}} ({{item.hemisphere}})

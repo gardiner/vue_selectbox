@@ -1,11 +1,21 @@
-$blue: #1F2035 !default;
-$gray: gray !default;
-$linegrid: 1.5 !default;
+:root {
+    --vue-selectbox-bg: white;
+    --vue-selectbox-fg: black;
+    --vue-selectbox-selected-bg: white;
+    --vue-selectbox-selected-fg: black;
+    --vue-selectbox-highlight-bg: #f5f5f5;
+    --vue-selectbox-highlight-fg: black;
+    --vue-selectbox-disabled-fg: lightgray;
+    --vue-selectbox-outerborder: gray;
+    --vue-selectbox-innerborder: lightgray;
+    --vue-selectbox-lineheight: 1.5;
+}
 
 .vue_selectbox {
     position: relative;
-    line-height: $linegrid;
+    line-height: var(--vue-selectbox-lineheight);
     box-sizing: border-box;
+    color: var(--vue-selectbox-fg);
 
     *,
     *:before,
@@ -18,18 +28,19 @@ $linegrid: 1.5 !default;
         display: block;
         width: 100%;
         margin: 0;
-        padding: 0.2em 0.4em;
-        border: 1px solid rgba($blue, 0.4);
+        padding: 0.3em;
+        background: var(--vue-selectbox-bg);
+        border: 1px solid var(--vue-selectbox-outerborder);
         outline: none;
-        font-size: inherit;
-        line-height: $linegrid;
+        font: inherit;
+        line-height: var(--vue-selectbox-lineheight);
     }
 
     .icon {
-        color: $blue;
-        line-height: $linegrid;
-        width: 18px;
+        line-height: var(--vue-selectbox-lineheight);
+        width: 1.5em;
         background: transparent no-repeat center center;
+        background-size: 0.9em 0.9em;
 
         &.active {
             cursor: pointer;
@@ -73,8 +84,12 @@ $linegrid: 1.5 !default;
     .value {
         display: inline-block;
         position: relative;
+        margin-right: 0.4em;
         padding-right: 1.5em;
-        margin-right: 1em;
+        padding-left: 0.3em;
+        color: var(--vue-selectbox-selected-fg);
+        background: var(--vue-selectbox-selected-bg);
+        border-radius: 3px;
 
         .clear {
             top: 0;
@@ -91,9 +106,9 @@ $linegrid: 1.5 !default;
         position: absolute;
         z-index: 4;
         width: 100%;
-        background: white;
-        color: $gray;
-        border: 1px solid rgba($blue, 0.4);
+        background: var(--vue-selectbox-bg);
+        color: var(--vue-selectbox-fg);
+        border: 1px solid var(--vue-selectbox-outerborder);
         border-top: none;
 
         .input {
@@ -111,11 +126,11 @@ $linegrid: 1.5 !default;
             list-style-type: none;
             overflow-y: auto;
             max-height: 200px;
-            border-top: 1px solid rgba($blue, 0.4);
+            border-top: 1px solid var(--vue-selectbox-innerborder);
         }
 
         li {
-            border-bottom: 1px solid rgba($gray, 0.3);
+            border-bottom: 1px solid var(--vue-selectbox-innerborder);
             padding: 0.2em 0.4em;
             cursor: pointer;
             overflow-x: hidden;
@@ -129,12 +144,13 @@ $linegrid: 1.5 !default;
 
             &.all_items:hover,
             &.active {
-                background: rgba($blue, 0.2);
+                background: var(--vue-selectbox-highlight-bg);
+                color: var(--vue-selectbox-highlight-fg);
             }
 
             &.selected,
             &.disabled {
-                color: rgba($gray, 0.2);
+                color: var(--vue-selectbox-disabled-fg);
                 cursor: default;
             }
 
@@ -155,7 +171,6 @@ $linegrid: 1.5 !default;
             padding-right: 0;
         }
     }
-
 
     &.pretty {
         display: block;

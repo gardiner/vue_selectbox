@@ -157,9 +157,10 @@ module.exports = {
             var num = this.filtered_candidates.length,
                 value = this.get_by_index(index),
                 is_selected = this.is_selected(value),
-                is_deselectable = this.is_deselectable(value);
+                is_deselectable = this.is_deselectable(value),
+                is_selectable = this.is_selectable(value);
 
-            if (index === false || (is_selected && (!is_deselectable || !this.config.allow_deselect_from_list))) {
+            if (index === false || (is_selected && (!is_deselectable || !this.config.allow_deselect_from_list)) || !is_selectable) {
                 this.current = false;
             } else {
                 this.current = (index + num) % num;
