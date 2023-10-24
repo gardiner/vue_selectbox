@@ -3,7 +3,7 @@
   "authors": [
     "Ole Trenner <ole.trenner@3dbits.de>"
   ],
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "vue.js dropdown/select for single-select and multi-select",
   "private": true,
   "dependencies": {
