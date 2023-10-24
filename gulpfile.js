@@ -70,6 +70,7 @@ gulp.task('js', function() {
             },
         }
     }, webpackcompiler))
+    .pipe(gulp.dest('build'))
     .pipe(gulp.dest('dist'))
     .pipe(connect.reload());
 });
@@ -91,6 +92,7 @@ gulp.task('watch', gulp.series('compile', function() {
 
     connect.server({
         livereload: true,
+        root: 'build',
         port: 8000,
     });
 }));

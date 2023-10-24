@@ -1,7 +1,7 @@
 .vue_selectbox(v-bind:class="{disabled: disabled}")
     .inputframe(v-on:click="activate" v-on:focus="activate" tabindex="0")
         template(v-if="!has_value")
-            span.placeholder {{ is_open || disabled ? " " : safe_placeholder }}
+            span.placeholder {{ is_open || disabled ? "&nbsp;" : safe_placeholder }}
         template(v-else-if="config.combine_all && is_multiple && is_all_selected")
             span.value
                 .icon.clear.active(v-if="!disabled" v-on:click="function(e) { unset_all(); e.stopPropagation(); return false; }")

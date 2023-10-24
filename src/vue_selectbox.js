@@ -102,7 +102,7 @@ module.exports = {
             return this.placeholder || "Search...";
         },
         safe_all_label: function() {
-            return this.all_label || "All items";
+            return this.all_label || "All items";
         }
     },
     mounted: function() {
