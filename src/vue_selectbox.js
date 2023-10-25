@@ -290,7 +290,7 @@ module.exports = {
         },
         pretty: function(item) {
             if ($.type(this.label) === 'function') {
-                return item ? this.label.call(null, item) : undefined;
+                return this.label.call(null, item);
             } else if ($.type(this.label) === 'string') {
                 return item ? item[this.label] : undefined;
             } else {
