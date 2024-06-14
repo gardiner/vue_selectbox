@@ -51,8 +51,9 @@ module.exports = {
                     add_on_select: true,                //adds a new value when pressing enter
                     allow_select_all: true,             //allows selecting all items with a single click
                     combine_all: false,                 //if all available items are selected, show single value
-                    is_selectable: null,                //callback: returns true if an item is selectable, false otherwise
-                    is_deselectable: null,              //callback: returns true if an item is deselectable, false otherwise
+                    is_selectable: null,                //callback (called with item): return true if an item is selectable
+                    is_deselectable: null,              //callback (called with item): return true if an item is deselectable
+                    is_selected: null,                  //callback (called with item and selected values): return true if an item is selected
                     search_placeholder: null,           //placeholder for search input element
                 },
                 key;
@@ -304,6 +305,9 @@ module.exports = {
             return this.config.is_deselectable ? this.config.is_deselectable.call(this, item) : true;
         },
         is_selected: function(item) {
+            if (this.config.is_selected) {
+                return this.config.is_selected(item, this.value);
+            }
             return this.value && this.value.indexOf(item) !== -1;
         },
         add_candidate: function() {
