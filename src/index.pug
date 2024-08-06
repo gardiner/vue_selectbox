@@ -25,12 +25,13 @@ html(lang="de")
                         single1: null,
                         single2: null,
                         single3: null,
+                        single4: null,
                         multiple: null,
                         continents: [
                             {name: 'Antarctica', hemisphere: 'South'},
                             {name: 'Asia', hemisphere: 'North'},
                             {name: 'Australia', hemisphere: 'South'},
-                            {name: 'Europe', hemisphere: 'North'},
+                            {name: 'Europe', hemisphere: 'North', hide_without_search: true},
                             {name: 'North America', hemisphere: 'North'},
                             {name: 'South America', hemisphere: 'South'}
                         ]
@@ -46,6 +47,10 @@ html(lang="de")
 
             h2 Disable options
             vue_selectbox(:candidates="continents" label="name" v-model="single3" placeholder="Select..." :options="{is_selectable: function(item) { return item.name != 'Australia'; }}")
+            pre {{single3 || 'null'}}
+
+            h2 Hide some options when no search is performed
+            vue_selectbox(:candidates="continents" label="name" v-model="single4" placeholder="Select..." :options="{is_default_candidate: function(item) { return !item.hide_without_search; }}")
             pre {{single3 || 'null'}}
 
             h2 Multi Select

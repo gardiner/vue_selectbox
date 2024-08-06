@@ -54,6 +54,7 @@ module.exports = {
                     is_selectable: null,                //callback (called with item): return true if an item is selectable
                     is_deselectable: null,              //callback (called with item): return true if an item is deselectable
                     is_selected: null,                  //callback (called with item and selected values): return true if an item is selected
+                    is_default_candidate: null,         //callback (called with item): return true if is shown as candidate without search
                     search_placeholder: null,           //placeholder for search input element
                 },
                 key;
@@ -74,6 +75,8 @@ module.exports = {
                         escapedInput = input.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
                     return label.toString().toLowerCase().match(escapedInput);
                 });
+            } else if (self.config.is_default_candidate && self.candidates) {
+                return self.candidates.filter(self.config.is_default_candidate);
             } else {
                 return self.candidates;
             }
