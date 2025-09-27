@@ -31,16 +31,22 @@
         padding: 0.3em;
         background: var(--vue-selectbox-bg);
         border: 1px solid var(--vue-selectbox-outerborder);
-        outline: none;
         font: inherit;
         line-height: var(--vue-selectbox-lineheight);
+
+        &:focus {
+
+        }
     }
 
     .icon {
+        display: block;
         line-height: var(--vue-selectbox-lineheight);
         width: 1.5em;
         background: transparent no-repeat center center;
         background-size: 0.9em 0.9em;
+        border: none;
+        font: inherit;
 
         &.active {
             cursor: pointer;
@@ -99,10 +105,6 @@
             right: 0;
             padding: 0;
         }
-
-        &:focus {
-            outline: none;
-        }
     }
 
     .candidates {
@@ -143,6 +145,12 @@
             &.all_items {
                 text-align: right;
                 font-style: italic;
+
+                button {
+                    border: none;
+                    background: none;
+                    font: inherit;
+                }
             }
 
             &.all_items:hover,

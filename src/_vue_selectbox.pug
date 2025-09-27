@@ -1,43 +1,68 @@
 .vue_selectbox(:class="{disabled: disabled}")
-    .inputframe(@click="activate" @focus="activate" tabindex="0")
+    .inputframe(:tabindex="disabled ? -1 : 0"
+                ref="inputframe"
+                @click="activate()"
+                @keydown.up.prevent="is_open ? prev() : activate()"
+                @keydown.down.prevent="is_open ? next() : activate()"
+                @keydown.enter.prevent="is_open ? select() : activate()"
+                @keydown.esc="close()"
+                role="combobox"
+                :aria-expanded="is_open ? 'true' : 'false'")
+
         template(v-if="!has_value")
             span.placeholder {{ is_open || disabled ? "&nbsp;" : safe_placeholder }}
+
         template(v-else-if="config.combine_all && is_multiple && is_all_selected")
             span.value
-                .icon.clear.active(v-if="!disabled" @click="(e) => { unset_all(); e.stopPropagation(); return false; }")
+                button.icon.clear.active(v-if="!disabled"
+                                         @keydown.enter.stop.prevent="unset_all()"
+                                         @click.stop.prevent="unset_all()")
                 |  {{ safe_all_label }}
+
         template(v-else="")
-            span.value(v-for="item in value" tabindex="-1" :class="{undeselectable: !is_deselectable(item)}")
-                .icon.clear.active(v-if="!disabled && is_deselectable(item)"
-                                   @click="(e) => { unset_value(item); e.stopPropagation(); return false; }")
+            span.value(v-for="item in value"
+                       :class="{undeselectable: !is_deselectable(item)}")
+                button.icon.clear.active(type="button"
+                                         v-if="!disabled && is_deselectable(item)"
+                                         @keydown.enter.stop.prevent="unset_value(item)"
+                                         @click.stop.prevent="unset_value(item)")
                 slot(name="selected" :item="item")
                     slot(name="candidate" :item="item")
                         | {{ pretty(item) }}
+
         .icon.open(:class="{active: !is_open && !disabled}")
 
-    .candidates(v-if="is_open && !disabled")
+    .candidates(v-if="is_open && !disabled"
+                role="listbox"
+                aria-label="Available options")
         .input(v-if="config.show_filter_input")
             input(type="text"
+                  ref="searchinput"
+                  name="searchinput"
                   :placeholder="config.search_placeholder"
                   v-model="input"
-                  @keydown.up="prev"
-                  @keydown.down="next"
-                  @keydown.enter.prevent="select"
-                  @keydown.esc="close"
-                  autocomplete="off")
-            .icon.add(:class="{active: is_add_visible}" @click="add_candidate")
-            .icon.clear(:class="{active: input}" @click="close")
+                  autocomplete="off"
+                  @keydown.up.prevent="prev()"
+                  @keydown.down.prevent="next()"
+                  @keydown.enter.prevent="select()"
+                  @keydown.esc="close()")
+            button.icon.add(type="button"
+                            v-if="is_add_visible"
+                            :class="{active: is_add_visible}"
+                            @click="add_candidate")
+            .icon.clear(:class="{active: input}")
 
-        ul(v-if="filtered_candidates.length > 0")
+        ul(v-if="filtered_candidates.length > 0"
+           tabindex="-1")
             li.all_items(v-if="is_multiple && config.allow_select_all"
-                         @mouseenter="set_current(false)"
-                         @click="select_filtered"
-                         :class="{disabled: is_all_selected,}")
-                | {{ safe_all_label }}…
+                         @mouseenter="set_current(false)")
+                button(type="button"
+                       @click="select_filtered"
+                       :disabled="is_all_selected") {{ safe_all_label }}…
             li(v-for="c, $index in filtered_candidates"
                :class="{selected: is_selected(c), active: (current === $index), deselectable: config.allow_deselect_from_list && is_deselectable(c), disabled: !is_selectable(c)}"
                @mouseenter="set_current($index)"
                @mouseup="select"
                :title="pretty(c)")
-                slot(name="candidate" :item="c")
+                slot(name="candidate" :item="c") 
                     | {{ pretty(c) }}

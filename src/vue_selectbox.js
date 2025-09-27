@@ -116,7 +116,7 @@ module.exports = {
         $(document)
         .on('click close_selectboxes', function(e) {
             if (!$(self.$el).has(e.target).length) {
-                self.close();
+                self.close(true);
             }
         });
     },
@@ -133,6 +133,9 @@ module.exports = {
         }
     },
     methods: {
+        toggle: function() {
+            this.is_open ? this.close() : this.activate();
+        },
         activate: function($event) {
             if (this.disabled) {
                 return;
@@ -140,21 +143,24 @@ module.exports = {
             $(document).trigger('close_selectboxes');
             if (!$event || ($event.keyCode !== 13 && $event.keyCode !== 27)) {
                 this.is_open = true;
-                this.focus();
+                this.focus_input();
                 return false;
             }
         },
-        focus: function() {
+        focus_input: function() {
             var self = this;
             if (this.disabled) {
                 return;
             }
-            window.setTimeout(function() { $(self.$el).find('input').focus(); });
+            self.$nextTick(() => self.$refs.searchinput?.focus());
         },
-        close: function() {
+        close: function(leave_focus) {
             this.is_open = false;
             this.current = false;
             this.input = null;
+            if (!leave_focus) {
+                this.$refs.inputframe?.blur();
+            }
         },
         /**
          * Highlights the value with the specified index.
@@ -195,8 +201,14 @@ module.exports = {
             return this.filtered_candidates[(index + num) % num];
         },
         find_next: function(direction) {
-            var num = this.filtered_candidates.length,
+            var self = this,
+                num = this.filtered_candidates.length,
                 next_index;
+
+            function is_valid(index) {
+                var item = self.get_by_index(index);
+                return !self.is_selected(item) && self.is_selectable(item);
+            }
 
             if (this.current === false) {
                 next_index = (direction > 0) ? 0 : -1;
@@ -205,11 +217,11 @@ module.exports = {
             }
 
             //skip selected values, but limited tries to avoid endless loop
-            while (this.is_selected(this.get_by_index(next_index)) && next_index < (2 * num) && next_index > (-2 * num)) {
+            while (!is_valid(next_index) && next_index < (2 * num) && next_index > (-2 * num)) {
                 next_index += direction;
             }
 
-            return next_index;
+            return is_valid(next_index) ? next_index : false;
         },
         next: function() {
             this.set_current(this.find_next(1));
@@ -232,7 +244,7 @@ module.exports = {
                 if (this.config.close_after_select) {
                     this.close();
                 } else {
-                    this.focus();
+                    this.focus_input();
                 }
             } else if (this.config.add_on_select) {
                 this.add_candidate();
@@ -281,7 +293,7 @@ module.exports = {
             if (!this.has_value && this.config.close_after_deselect) {
                 this.close();
             } else {
-                this.focus();
+                this.focus_input();
             }
         },
         unset_all: function() {
@@ -291,7 +303,7 @@ module.exports = {
             if (!this.has_value && this.config.close_after_deselect) {
                 this.close();
             } else {
-                this.focus();
+                this.focus_input();
             }
         },
         pretty: function(item) {

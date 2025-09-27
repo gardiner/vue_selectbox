@@ -23,7 +23,8 @@ html(lang="en")
                 vue_selectbox(:candidates="continents"
                               label="name"
                               v-model="single1"
-                              placeholder="Select...")
+                              placeholder="Select..."
+                              :options="{show_filter_input: false}")
                 pre {{single1 || 'null'}}
 
                 h2 Disable options
@@ -55,7 +56,7 @@ html(lang="en")
                 h2 Add new options
                 vue_selectbox(:candidates="continents"
                               label="name"
-                              v-on:add="(val) => continents.push(single2 = {name: val})"
+                              v-on:add="(val) => continents.push(single4 = {name: val})"
                               v-model="single4"
                               placeholder="Select..."
                               :options="{allow_adding: true, close_after_add: false}")
