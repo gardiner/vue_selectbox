@@ -17,18 +17,18 @@
     "url": "https://github.com/gardiner/vue_selectbox/issues"
   },
   "dependencies": {
-    "jquery": "^3.2.1"
+    "jquery": "^3"
   },
   "homepage": "https://github.com/gardiner/vue_selectbox#readme",
   "devDependencies": {
-    "gulp": "^4.0.2",
+    "gulp": "^5.0.1",
     "gulp-connect": "^5.7.0",
     "gulp-pug": "^5.0.0",
     "gulp-sass": "^5.1.0",
     "html-loader": "^4.2.0",
-    "pug": "^3.0.2",
-    "sass": "^1.69.4",
-    "webpack": "^5.89.0",
+    "pug": "^3.0.3",
+    "sass": "^1.93.2",
+    "webpack": "^5.101.3",
     "webpack-stream": "^7.0.0"
   }
 }
