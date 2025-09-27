@@ -1,1 +1,3 @@
-vue.js select/multiselect component
+# Vue.js select/multiselect component
+
+This component should work with Vue 2 and 3.

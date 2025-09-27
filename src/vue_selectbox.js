@@ -16,16 +16,18 @@ module.exports = {
         'candidates',   //selectable items
         'placeholder',  //placeholder text
         'all_label',    //label/placeholder for "all items"
-        'model',        //selected value
+        'modelValue',   //selected value
         'label',        //item property (string) or callback (function) for displaying and searching
         'multiple',     //whether multiple items can be selected
         'disabled',     //whether the select is active and can be used
         'options'       //configuration options, see this.config
     ],
-    //allows use of v-model directive
+    emits: [
+        'update:modelValue',
+    ],
     model: {
-        'prop': 'model',
-        'event': 'update'
+        prop: 'modelValue',
+        event: 'update:modelValue'
     },
     data: function() {
         return {
@@ -119,12 +121,12 @@ module.exports = {
         });
     },
     watch: {
-        model: {
-            handler: function(model) {
+        modelValue: {
+            handler: function() {
                 if (this.is_multiple) {
-                    this.value = model ? array_clone(model) : [];
+                    this.value = this.modelValue ? array_clone(this.modelValue) : [];
                 } else {
-                    this.value = model ? [model] : null;
+                    this.value = this.modelValue ? [this.modelValue] : null;
                 }
             },
             immediate: true
@@ -246,7 +248,7 @@ module.exports = {
                     self.value.push(candidate);
                 }
             });
-            self.$emit('update', self.value);
+            self.$emit('update:modelValue', self.value);
             self.close();
         },
         /**
@@ -260,10 +262,10 @@ module.exports = {
                 return;
             } else if (this.is_multiple) {
                 this.value.push(value);
-                this.$emit('update', this.value);
+                this.$emit('update:modelValue', this.value);
             } else {
                 this.value = value ? [value] : null;
-                this.$emit('update', value);
+                this.$emit('update:modelValue', value);
             }
         },
         unset_value: function(value) {
@@ -271,10 +273,10 @@ module.exports = {
                 return;
             } else if (this.is_multiple) {
                 this.value = array_without(this.value, value);
-                this.$emit('update', this.value);
+                this.$emit('update:modelValue', this.value);
             } else {
                 this.value = null;
-                this.$emit('update', this.value);
+                this.$emit('update:modelValue', this.value);
             }
             if (!this.has_value && this.config.close_after_deselect) {
                 this.close();
@@ -285,7 +287,7 @@ module.exports = {
         unset_all: function() {
             //TODO: respect is_deselectable()
             this.value = this.is_multiple ? [] : null;
-            this.$emit('update', this.value);
+            this.$emit('update:modelValue', this.value);
             if (!this.has_value && this.config.close_after_deselect) {
                 this.close();
             } else {
