@@ -4,6 +4,9 @@
     "version": "0.3.0",
     "update_version_filelist": [
       "package.json"
-    ]
+    ],
+    "assets": {
+      "path": "./"
+    }
   }
 }
